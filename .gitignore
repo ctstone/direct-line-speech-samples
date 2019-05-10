@@ -262,3 +262,7 @@ __pycache__/
 
 # Settings
 appsettings.*.json
+
+# Deploy
+out
+out.zip
