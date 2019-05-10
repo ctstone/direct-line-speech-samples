@@ -37,6 +37,8 @@ namespace Client
         public MainPage()
         {
             InitializeComponent();
+            SpeechRegion.Text = "westus";
+            SpeechLanguage.Text = "en-US";
         }
 
         private async void EnableMicrophone_ButtonClicked(object sender, RoutedEventArgs e)
@@ -149,12 +151,13 @@ namespace Client
         {
             // create a BotConnectorConfig by providing a bot secret key and Cognitive Services subscription key
             // the RecoLanguage property is optional (default en-US); note that only en-US is supported in Preview
-            const string channelSecret = "9KUWJOW2N7A.cwA.iqA.G_0h9farH1r4gbua3Zi1pyI4XowWmsBapEkxQ-o2ih8";
-            const string speechSubscriptionKey = "ef28d0f959cd447f8c8723f12a73a434";
-            const string region = "westus2"; // note: this is assumed as westus2 for preview
+            string channelSecret = BotSecret.Password;
+            string speechSubscriptionKey = SpeechKey.Password;
+            string region = SpeechRegion.Text;
+            string language = SpeechLanguage.Text;
 
             var botConnectorConfig = BotConnectorConfig.FromSecretKey(channelSecret, speechSubscriptionKey, region);
-            botConnectorConfig.SetProperty(PropertyId.SpeechServiceConnection_RecoLanguage, "en-US");
+            botConnectorConfig.SetProperty(PropertyId.SpeechServiceConnection_RecoLanguage, language);
             botConnector = new SpeechBotConnector(botConnectorConfig);
 
             // ActivityReceived is the main way your bot will communicate with the client and uses bot framework activities
@@ -221,6 +224,11 @@ namespace Client
             {
                 NotifyUser($"Exception: {ex.ToString()}", NotifyType.ErrorMessage);
             }
+        }
+
+        private void InitialiazeBot_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
