@@ -3,10 +3,8 @@
 MSA_APP_ID=$1
 MSA_APP_PW=$2
 RG=$3
-ACR=$4
-WEB=$5
-PLAN=$6
-DEPLOY_PW=$7
+WEB=$4
+PLAN=$5
 
 # CREATE APP SERVICE PLAN
 az appservice plan create \
@@ -32,7 +30,7 @@ az webapp config set \
   --web-sockets-enabled true \
   --use-32bit-worker-process false
     
-# Build server
+# Build
 pushd Server
 dotnet publish -c Release -o out
 powershell
