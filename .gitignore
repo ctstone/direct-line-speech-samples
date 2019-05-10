@@ -262,6 +262,7 @@ __pycache__/
 
 # Settings
 appsettings.*.json
+*.bot
 
 # Deploy
 out
