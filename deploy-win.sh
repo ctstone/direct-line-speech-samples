@@ -19,13 +19,18 @@ az webapp create \
   --name $WEB \
   --plan $PLAN
   
-# CONFIGURE WEB APP SETTINGS
+# CONFIGURE WEB APP
 az webapp config appsettings set \
   --resource-group $RG \
   --name $WEB \
   --settings \
     MicrosoftAppId=$MSA_APP_ID \
     MicrosoftAppPassword="$MSA_PASSWORD"
+az webapp config set \
+  --resource-group $RG \
+  --name $WEB \
+  --web-sockets-enabled true \
+  --use-32bit-worker-process false
     
 # Build server
 pushd Server
