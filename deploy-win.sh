@@ -37,7 +37,7 @@ pushd Server
 dotnet publish -c Release -o out
 powershell
 rm out/appsettings.Development.json
-Compress-Archive -path out/* -DestinationPath out.zip
+Compress-Archive -path out/* -DestinationPath out.zip -Force
 exit
 
 # Deploy
