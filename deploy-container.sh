@@ -22,15 +22,15 @@ az webapp create \
   --resource-group $RG \
   --name $WEB \
   --plan $PLAN \
-  --runtime 'aspnet|v4.7'
+  --runtime 'DOTNETCORE|2.2'
   
 # CONFIGURE WEB APP SETTINGS
 az webapp config appsettings set \
   --resource-group $RG \
   --name $WEB \
   --settings \
-    MSA_APP_ID=$MSA_APP_ID \
-    MSA_PASSWORD=$MSA_PASSWORD
+    MicrosoftAppId=$MSA_APP_ID \
+    MicrosoftAppPassword="$MSA_PASSWORD"
 
 # CONFIGURE WEB APP CONTAINER IMAGE
 ACR_KEY=$(az acr credential show \
