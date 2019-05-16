@@ -1,21 +1,14 @@
-﻿using Microsoft.CognitiveServices.Speech;
+﻿using Microsoft.Bot.Schema;
+using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using Microsoft.CognitiveServices.Speech.Dialog;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -76,6 +69,18 @@ namespace Client
             else
             {
                 var task = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => UpdateStatus(strMessage, type));
+            }
+        }
+
+        private void UpdateTextBlock(TextBlock textBlock, string message)
+        {
+            if (Dispatcher.HasThreadAccess)
+            {
+                textBlock.Text = message;
+            }
+            else
+            {
+                var task = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => textBlock.Text = message);
             }
         }
 
@@ -163,12 +168,15 @@ namespace Client
             // ActivityReceived is the main way your bot will communicate with the client and uses bot framework activities
             botConnector.ActivityReceived += (sender, activityReceivedEventArgs) =>
             {
-                NotifyUser($"Activity received, hasAudio={activityReceivedEventArgs.HasAudio} activity={activityReceivedEventArgs.Activity}");
+                NotifyUser($"  Activity received, hasAudio={activityReceivedEventArgs.HasAudio}\n");
 
                 if (activityReceivedEventArgs.HasAudio)
                 {
                     SynchronouslyPlayActivityAudio(activityReceivedEventArgs.Audio);
                 }
+
+                Activity activity = JsonConvert.DeserializeObject<Activity>(activityReceivedEventArgs.Activity);
+                UpdateTextBlock(ResponseText, activity.Text);
             };
             // Canceled will be signaled when a turn is aborted or experiences an error condition
             botConnector.Canceled += (sender, canceledEventArgs) =>
@@ -176,18 +184,20 @@ namespace Client
                 NotifyUser($"Canceled, reason={canceledEventArgs.Reason}");
                 if (canceledEventArgs.Reason == CancellationReason.Error)
                 {
-                    NotifyUser($"Error: code={canceledEventArgs.ErrorCode}, details={canceledEventArgs.ErrorDetails}");
+                    NotifyUser($"  Error: code={canceledEventArgs.ErrorCode}, details={canceledEventArgs.ErrorDetails}");
                 }
             };
             // Recognizing (not 'Recognized') will provide the intermediate recognized text while an audio stream is being processed
             botConnector.Recognizing += (sender, recognitionEventArgs) =>
             {
-                NotifyUser($"Recognizing! in-progress text={recognitionEventArgs.Result.Text}");
+                // NotifyUser($"Recognizing! in-progress text={recognitionEventArgs.Result.Text}");
+                UpdateTextBlock(RecognizedText, recognitionEventArgs.Result.Text);
             };
             // Recognized (not 'Recognizing') will provide the final recognized text once audio capture is completed
             botConnector.Recognized += (sender, recognitionEventArgs) =>
             {
-                NotifyUser($"Final speech-to-text result: '{recognitionEventArgs.Result.Text}'");
+                // NotifyUser($"Final speech-to-text result: '{recognitionEventArgs.Result.Text}'");
+                UpdateTextBlock(RecognizedText, recognitionEventArgs.Result.Text);
             };
             // SessionStarted will notify when audio begins flowing to the service for a turn
             botConnector.SessionStarted += (sender, sessionEventArgs) =>
@@ -197,7 +207,7 @@ namespace Client
             // SessionStopped will notify when a turn is complete and it's safe to begin listening again
             botConnector.SessionStopped += (sender, sessionEventArgs) =>
             {
-                NotifyUser($"Listening complete. Session ended, id={sessionEventArgs.SessionId}");
+                NotifyUser($"  Listening complete. Session ended, id={sessionEventArgs.SessionId}");
             };
         }
 
@@ -207,28 +217,23 @@ namespace Client
             {
                 InitializeBotConnector();
                 // Optional step to speed up first interaction: if not called, connection happens automatically on first use
-                var connectTask = botConnector.ConnectAsync();
+                await botConnector.ConnectAsync();
             }
 
             try
             {
                 // Start sending audio to your speech-enabled bot
-                var listenTask = botConnector.ListenOnceAsync();
+                await botConnector.ListenOnceAsync();
 
                 // You can also send activities to your bot as JSON strings -- Microsoft.Bot.Schema can simplify this
-                string speakActivity = @"{""type"":""message"",""text"":""Greeting Message"", ""speak"":""Hello there!""}";
-                await botConnector.SendActivityAsync(speakActivity);
+                // string speakActivity = @"{""type"":""message"",""text"":""Greeting Message"", ""speak"":""Hello there!""}";
+                // await botConnector.SendActivityAsync(speakActivity);
 
             }
             catch (Exception ex)
             {
                 NotifyUser($"Exception: {ex.ToString()}", NotifyType.ErrorMessage);
             }
-        }
-
-        private void InitialiazeBot_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }
