@@ -10,7 +10,7 @@ This folder contains source code to run a .NET Core web server as a Direct-Line-
 
 ## Configure
 
-Create [appsettings.development.json] and add the following values:
+Create `appsettings.development.json` and add the following values:
 
 ```json
 {
@@ -24,6 +24,8 @@ Create [appsettings.development.json] and add the following values:
 ```bash
 dotnet run
 ```
+
+> At this point your bot is listening at http://localhost:3979/api/messages. You should be able to connect to it using the Bot Framework Emulator, but you will not be able to connect a speech client without using a proxy tool like Ngrok, or deploying the server to an Internet-addressable host.
 
 ## Build
 
