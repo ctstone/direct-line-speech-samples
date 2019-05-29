@@ -17,8 +17,8 @@ public final class App {
     final static Logger log = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
-        final String channelSecret = "8GoCpzQAFHA.cwA.ErM.mmDOajssRrJ-xHdgZrUX0ocDnHvb1-rLRiwdmByoe1w";
-        final String subscriptionKey = "a7a87906a4c846afb629c3f978906606";
+        final String channelSecret = "YOUR_SECRET_HERE";
+        final String subscriptionKey = "YOUR_KEY_HERE";
         final String region = "westus2";
         final BotConnectorConfig botConnectorConfig = BotConnectorConfig.fromSecretKey(channelSecret, subscriptionKey,
                 region);
