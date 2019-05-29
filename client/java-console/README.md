@@ -11,7 +11,7 @@ This folder contains source code to run a Java application from the command line
 
 ## Configure
 
-1. Edit [./src/main/java/speechsdk/quickstart/App.java](App.java)
+1. Edit [App.java](./src/main/java/speechsdk/quickstart/App.java)
 1. Set `channelSecret` to your Direct Line Speech channel secret
 1. Set `subscriptionKey` to your Speech Service subscription key
 1. As of this writing the only supported region is `westus2`. Change the `region` value if needed.
