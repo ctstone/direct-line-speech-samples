@@ -11,3 +11,5 @@
 1. `./gradlew installDebug`
 1. Connect to device with Vysor
 1. Open the `Speech Recognition App` on your device
+
+> If you need a web browser to authorize a Wi-Fi connection, you can install https://github.com/scoute-dich/browser
