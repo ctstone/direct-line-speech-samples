@@ -6,6 +6,7 @@ This repo contains sample code to work with the Microsoft Direct Line Speech API
 
 - [.NET Core (Universal Windows Platform)](./client/net-core-uwp)
 - [Java (console)](./client/java-console)
+- [Roobo (android)](./client/android-roobo)
 
 ## Server Demos
 
