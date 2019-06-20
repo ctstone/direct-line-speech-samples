@@ -41,7 +41,7 @@ az acr create -g $RG -n $ACR --sku Standard --admin-enabled
 ### 4. Build Container Image
 
 ```bash
-az acr build -g $RG -r $ACR -t $IMAGE:latest . -t $IMAGE:{{.Run.ID}}
+az acr build -g $RG -r $ACR -t $IMAGE:latest -t $IMAGE:{{.Run.ID}} .
 ```
 
 ### 5. Create Linux Web App
