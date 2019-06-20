@@ -4,8 +4,8 @@
 export const PORT = env('PORT', '3978');
 
 export const BOT_SETTINGS = {
-  appId: env('MSA_APP_ID'),
-  appPassword: env('MSA_PASSWORD'),
+  appId: env('MSA_APP_ID', ''),
+  appPassword: env('MSA_PASSWORD', ''),
 };
 
 export function env(name: string, defaultValue?: string) {

@@ -14,17 +14,22 @@
   "license": "MIT",
   "dependencies": {
     "@types/express": "^4.17.0",
-    "@types/node": "^11.13.14",
-    "@types/ws": "^6.0.1",
+    "@types/restify": "^7.2.11",
     "botbuilder": "^4.4.0",
+    "botbuilder-skills": "^4.4.5",
     "express": "^4.17.1",
-    "microsoft-bot-protocol-streamingextensions": "0.0.1",
+    "express-ws": "^4.0.0",
+    "microsoft-bot-protocol": "https://botbuilder.myget.org/F/experimental/npm/microsoft-bot-protocol/-/microsoft-bot-protocol-0.0.1.tgz",
+    "microsoft-bot-protocol-namedpipe": "https://botbuilder.myget.org/F/experimental/npm/microsoft-bot-protocol-namedpipe/-/microsoft-bot-protocol-namedpipe-0.0.1.tgz",
+    "microsoft-bot-protocol-streamingextensions": "https://botbuilder.myget.org/F/experimental/npm/microsoft-bot-protocol-streamingextensions/-/microsoft-bot-protocol-streamingextensions-0.0.1.tgz",
+    "microsoft-bot-protocol-websocket": "https://botbuilder.myget.org/F/experimental/npm/microsoft-bot-protocol-websocket/-/microsoft-bot-protocol-websocket-0.0.1.tgz",
     "promise.prototype.finally": "^3.1.0",
+    "restify": "^8.3.3",
     "tsc-watch": "^2.2.1",
-    "watershed": "^0.4.0",
-    "ws": "^6.2.1"
+    "watershed": "^0.4.0"
   },
   "devDependencies": {
+    "@types/express-ws": "^3.0.0",
     "dotenv": "^8.0.0",
     "tslint": "^5.17.0",
     "typescript": "^3.5.2"
