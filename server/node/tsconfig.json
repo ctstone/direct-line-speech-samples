@@ -7,5 +7,9 @@
     "sourceMap": true,
     "outDir": "./dist",
     "declaration": true
-  }
+  },
+  "exclude": [
+    "lib/**",
+    "dist/**"
+  ]
 }

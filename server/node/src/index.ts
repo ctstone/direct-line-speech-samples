@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { BotFrameworkAdapter, TurnContext } from 'botbuilder';
+import { ActivityHandler, BotFrameworkAdapter, TurnContext } from 'botbuilder';
 import * as express from 'express';
 import * as expressWs from 'express-ws';
 import { IncomingMessage } from 'http';
@@ -15,13 +15,15 @@ import { UpgradedResponse } from './upgraded-response';
 
 const { appId, appPassword } = BOT_SETTINGS;
 const adapter = new BotFrameworkAdapter({ appId, appPassword });
+const bot = new HelloWorldBot();
+const webSocketConnector = new WebSocketConnector(bot);
+
 adapter.onTurnError = async (context: TurnContext, error) => {
   console.error('[ Unhandled Error ] ', error);
   await context.sendActivity(`Oops, something went wrong! Check your bot's log`);
 };
 
-const bot = new HelloWorldBot();
-const webSocketConnector = new WebSocketConnector(bot);
+startWithRestify(bot, adapter, webSocketConnector);
 
 // expressWs(express()).app
 //   .post('/api/messages', async (req, res, next) => {
@@ -80,25 +82,29 @@ const webSocketConnector = new WebSocketConnector(bot);
 //   })
 //   ;
 
-const server = restify.createServer({ handleUpgrades: true });
-server.listen(process.env.port || process.env.PORT || 3978, () => {
-  console.log(`\n${server.name} listening to ${server.url}`);
-  console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
-  console.log(`\nSee https://aka.ms/connect-to-bot for more information`);
-});
-
-server.post('/api/messages', (req, res) => {
-  adapter.processActivity(req, res, async (context) => {
-    // Route to main dialog.
-    await bot.run(context);
+function startWithRestify(bot: ActivityHandler, adapter: BotFrameworkAdapter, webSocketConnector: WebSocketConnector) {
+  const server = restify.createServer({ handleUpgrades: true });
+  server.listen(process.env.port || process.env.PORT || 3978, () => {
+    console.log(`\n${server.name} listening to ${server.url}`);
+    console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
+    console.log(`\nSee https://aka.ms/connect-to-bot for more information`);
   });
-});
 
-server.get('/api/messages', function handleUpgrades(req, res, next) {
-  const wsc = new WebSocketConnector(bot);
-
-  wsc.processAsync(req, res, {
-    appId: process.env.MicrosoftAppId,
-    appPassword: process.env.MicrosoftAppPassword,
+  server.post('/api/messages', (req, res) => {
+    adapter.processActivity(req, res, async (context) => {
+      await bot.run(context);
+    });
   });
-});
+
+  server.get('/api/messages', function handleUpgrades(req, res, next) {
+    // TODO: validate that we can reuse the WebSocketConnector across requests
+    webSocketConnector.processAsync(req, res, {
+      appId: process.env.MicrosoftAppId,
+      appPassword: process.env.MicrosoftAppPassword,
+    });
+  });
+}
+
+function startWithExpress() {
+  throw new Error('Not implemented');
+}
