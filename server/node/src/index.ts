@@ -23,7 +23,8 @@ adapter.onTurnError = async (context: TurnContext, error) => {
   await context.sendActivity(`Oops, something went wrong! Check your bot's log`);
 };
 
-startWithRestify(bot, adapter, webSocketConnector);
+// startWithRestify(bot, adapter, webSocketConnector);
+startWithExpress(bot, adapter, webSocketConnector);
 
 // expressWs(express()).app
 //   .post('/api/messages', async (req, res, next) => {
@@ -105,6 +106,23 @@ function startWithRestify(bot: ActivityHandler, adapter: BotFrameworkAdapter, we
   });
 }
 
-function startWithExpress() {
-  throw new Error('Not implemented');
+function startWithExpress(bot: ActivityHandler, adapter: BotFrameworkAdapter, webSocketConnector: WebSocketConnector) {
+  express()
+    .post('/api/messages', async (req, res, next) => {
+      try {
+        await adapter.processActivity(req, res, (context) => bot.run(context));
+      } catch (err) {
+        next(err);
+      }
+    })
+    .listen(PORT, () => console.log(`Listening on ${PORT}. Connect to the bot using the Bot Framework Emulator.`))
+    .on('upgrade', async (req: IncomingMessage, socket: Socket, head: Buffer) => {
+      try {
+        const res = new UpgradedResponse(req, socket, head);
+        await webSocketConnector.processAsync(req, res, { appId, appPassword });
+      } catch (err) {
+        console.error(err);
+        throw err;
+      }
+    });
 }
