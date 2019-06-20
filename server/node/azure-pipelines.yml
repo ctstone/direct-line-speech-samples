@@ -1,0 +1,77 @@
+variables:
+  azureSubscription: Boston - Team Sharat
+  projectName:
+  artifactName: Build
+  docker.id:
+  docker.registry: $(docker.id).azurecr.io
+  docker.image: $(docker.registry)/$(projectName)
+  webApp.name:
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - server/node/*
+
+jobs:
+  # BUILD
+  - job: Build
+    steps:
+      - script: npm install
+        workingDirectory: server/node
+      - task: CopyFiles@2
+        inputs:
+          contents: |
+            **/*
+            !.git/**
+            !node_modules/**
+          sourceFolder: server/node
+          targetFolder: $(Build.ArtifactStagingDirectory)
+
+      - task: PublishPipelineArtifact@0
+        inputs:
+          artifactName: $(artifactName)
+          targetPath: $(Build.ArtifactStagingDirectory)
+
+  # DOCKER IMAGE
+  - job: Docker
+    dependsOn:
+      - Build
+    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+    steps:
+      - checkout: none
+      - task: DownloadPipelineArtifact@1
+        inputs:
+          artifactName: $(artifactName)
+          downloadPath: $(Build.ArtifactStagingDirectory)/Build
+
+      - task: Docker@1
+        inputs:
+          azureSubscriptionEndpoint: $(azureSubscription)
+          azureContainerRegistry: $(docker.registry)
+          command: login
+
+      - script: |
+          docker build -t $(docker.image):$(Build.BuildId) . \
+          && docker tag $(docker.image):$(Build.BuildId) $(docker.image):latest \
+          && docker push $(docker.image):$(Build.BuildId) \
+          && docker push $(docker.image):latest
+        workingDirectory: $(Build.ArtifactStagingDirectory)/Build
+
+  # DEPLOY AZURE WEB APP
+  - job: Deploy
+    dependsOn:
+      - Docker
+    steps:
+      - checkout: none
+      - task: AzureRmWebAppDeployment@4
+        inputs:
+          connectionType: "AzureRM" # Options: azureRM, publishProfile
+          azureSubscription: $(azureSubscription) # Required when connectionType == AzureRM
+          appType: webAppContainer # Required when connectionType == AzureRM# Options: webApp, webAppLinux, webAppContainer, functionApp, functionAppLinux, functionAppContainer, apiApp, mobileApp
+          webAppName: $(webApp.name) # Required when connectionType == AzureRM
+          dockerNamespace: $(docker.registry) # Required when appType == WebAppContainer || WebAppkind == FunctionAppContainer
+          dockerRepository: $(projectName) # Required when appType == WebAppContainer || WebAppkind == FunctionAppContainer
+          dockerImageTag: $(Build.BuildId) # Optional
