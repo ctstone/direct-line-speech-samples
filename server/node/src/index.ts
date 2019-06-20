@@ -4,12 +4,14 @@
 import * as express from 'express';
 
 import { HelloWorldBot } from './bot';
-import { createBotAdapter, createBotWebSocketAdapter } from './services';
 import { BOT_SETTINGS, PORT } from './settings';
+import { BotFrameworkAdapterConnect } from './wrappers/bot-framework-adapter-connect';
+import { BotFrameworkAdapterWebSocket } from './wrappers/bot-framework-adapter-ws';
 
-const { endpoint } = BOT_SETTINGS;
-const adapter = createBotAdapter();
-const webSocketAdapter = createBotWebSocketAdapter();
+const { appId, appPassword, endpoint } = BOT_SETTINGS;
+
+const adapter = new BotFrameworkAdapterConnect({ appId, appPassword });
+const webSocketAdapter = new BotFrameworkAdapterWebSocket({ appId, appPassword, endpoint });
 const bot = new HelloWorldBot();
 const server = express()
   .post(endpoint, adapter.connect(bot))

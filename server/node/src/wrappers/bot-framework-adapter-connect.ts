@@ -5,10 +5,11 @@ export type NextCallback = (err?: any) => void;
 export type BotLogic = LogicCallback | ActivityHandler;
 export type Settings = Partial<BotFrameworkAdapterSettings>;
 
-/**
- * Extend the BotFrameworkAdapter to support simplified Connect-style middleware
- */
 export class BotFrameworkAdapterConnect extends BotFrameworkAdapter {
+  /**
+   * Extends the BotFrameworkAdapter to support simplified Connect-style middleware
+   * @param settings Optional adapter settings
+   */
   constructor(settings?: Settings) {
     super(settings);
 

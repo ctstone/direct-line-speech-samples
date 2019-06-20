@@ -11,8 +11,18 @@ export interface Settings extends Partial<BotFrameworkAdapterSettings> {
 }
 
 export class BotFrameworkAdapterWebSocket {
+
+  /**
+   * Wraps the WebSocketConnector to support simplified http->WebSocket upgrade and routing
+   * @param settings Optional adapter settings
+   */
   constructor(private settings?: Settings) { }
 
+  /**
+   * Upgarde the Node.js http server to support bot WebSocket requests
+   * @param server Standard Node.js http server
+   * @param bot Bot logic
+   */
   upgrade(server: Server, bot: ActivityHandler) {
     const wsc = new WebSocketConnector(bot);
     const { appId, appPassword, endpoint } = this.settings;

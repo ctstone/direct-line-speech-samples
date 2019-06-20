@@ -34,13 +34,3 @@ export function createStorage() {
 //   const { key } = DARK_SKY_SETTINGS;
 //   return new DarkSky(key);
 // }
-
-export function createBotAdapter() {
-  const { appId, appPassword } = BOT_SETTINGS;
-  return new BotFrameworkAdapterConnect({ appId, appPassword });
-}
-
-export function createBotWebSocketAdapter() {
-  const { appId, appPassword, endpoint } = BOT_SETTINGS;
-  return new BotFrameworkAdapterWebSocket({ appId, appPassword, endpoint });
-}
