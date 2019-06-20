@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "microsoft-bot-protocol": "^0.0.1",
+    "microsoft-bot-protocol": "file:../microsoft-bot-protocol",
     "uuid": "^3.3.2",
     "watershed": "^0.4.0",
     "ws": "^6.2.1"
