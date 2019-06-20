@@ -6,6 +6,7 @@ export const PORT = env('PORT', '3978');
 export const BOT_SETTINGS = {
   appId: env('MSA_APP_ID', ''),
   appPassword: env('MSA_PASSWORD', ''),
+  endpoint: env('BOT_ENDPOINT', '/api/messages'),
 };
 
 export function env(name: string, defaultValue?: string) {

@@ -3,9 +3,16 @@
 
 import { ActivityHandler, BotHandler } from 'botbuilder';
 
+import { voice } from './voice';
+
 const VERSION = '0.5';
+const LANGUAGE = 'en-US';
+const VOICE_ID = 'Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)';
 
 export class HelloWorldBot extends ActivityHandler {
+
+  speaker = voice(VOICE_ID, LANGUAGE);
+
   constructor() {
     super();
     this.onMembersAdded(this.membersAdded.bind(this));
@@ -24,7 +31,8 @@ export class HelloWorldBot extends ActivityHandler {
   private message: BotHandler = async (context, next) => {
     const { name, id } = context.activity.from;
     const { text } = context.activity;
-    await context.sendActivity(`[ v${VERSION} ] : ${name || id} said "${text}"`);
+    const speak = this.speaker(`You said: "${text}"`);
+    await context.sendActivity(`[ v${VERSION} ] : ${name || id} said "${text}"`, speak);
     await next();
   }
 }
