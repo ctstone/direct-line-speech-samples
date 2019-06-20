@@ -1,7 +1,7 @@
 {
   "name": "direct-line-speech-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Sample Node.js streaming server for Bot Framework",
   "main": "index.js",
   "scripts": {
     "start": "node dist",
@@ -10,25 +10,21 @@
     "watch": "tsc-watch --onSuccess \"npm start\""
   },
   "keywords": [],
-  "author": "",
+  "author": "chstone@microsoft.com",
   "license": "MIT",
   "dependencies": {
-    "@types/express": "^4.17.0",
-    "@types/restify": "^7.2.11",
     "botbuilder": "^4.4.0",
     "express": "^4.17.1",
-    "express-ws": "^4.0.0",
-    "promise.prototype.finally": "^3.1.0",
-    "restify": "^8.3.3",
-    "tsc-watch": "^2.2.1",
-    "watershed": "^0.4.0",
     "microsoft-bot-protocol": "file:lib/microsoft-bot-protocol",
     "microsoft-bot-protocol-namedpipe": "file:lib/microsoft-bot-protocol-namedpipe",
     "microsoft-bot-protocol-streamingextensions": "file:lib/microsoft-bot-protocol-streamingextensions",
-    "microsoft-bot-protocol-websocket": "file:lib/microsoft-bot-protocol-websocket"
+    "microsoft-bot-protocol-websocket": "file:lib/microsoft-bot-protocol-websocket",
+    "restify": "^8.3.3",
+    "tsc-watch": "^2.2.1"
   },
   "devDependencies": {
-    "@types/express-ws": "^3.0.0",
+    "@types/express": "^4.17.0",
+    "@types/restify": "^7.2.11",
     "dotenv": "^8.0.0",
     "tslint": "^5.17.0",
     "typescript": "^3.5.2"

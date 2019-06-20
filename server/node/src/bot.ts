@@ -3,7 +3,7 @@
 
 import { ActivityHandler, BotHandler } from 'botbuilder';
 
-const VERSION = '0.3';
+const VERSION = '0.5';
 
 export class HelloWorldBot extends ActivityHandler {
   constructor() {

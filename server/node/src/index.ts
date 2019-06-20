@@ -3,7 +3,6 @@
 
 import { ActivityHandler, BotFrameworkAdapter, TurnContext } from 'botbuilder';
 import * as express from 'express';
-import * as expressWs from 'express-ws';
 import { IncomingMessage } from 'http';
 import { WebSocketConnector } from 'microsoft-bot-protocol-streamingextensions';
 import { Socket } from 'net';
@@ -26,63 +25,6 @@ adapter.onTurnError = async (context: TurnContext, error) => {
 // startWithRestify(bot, adapter, webSocketConnector);
 startWithExpress(bot, adapter, webSocketConnector);
 
-// expressWs(express()).app
-//   .post('/api/messages', async (req, res, next) => {
-//     try {
-//       await adapter.processActivity(req, res, (context) => bot.run(context));
-//     } catch (err) {
-//       next(err);
-//     }
-
-//   })
-//   .ws('/api/messages', async (ws, req, next) => {
-//     ws.on('upgrade', () => {
-//       console.log('upgrade');
-//     });
-//     ws.on('message', (data) => {
-//       console.log('DATA', data);
-//       ws.send('you said ' + data);
-//     });
-//     // try {
-//     // await webSocketConnector.processAsync(req, res, { appId, appPassword });
-//     // } catch (err) {
-//     //   next(err);
-//     // }
-
-//   })
-//   .listen(PORT, () => console.log(`Listening on ${PORT}. Connect to the bot using the Bot Framework Emulator.`));
-
-// const app = express()
-//   .post('/api/messages', async (req, res, next) => {
-//     try {
-//       await adapter.processActivity(req, res, (context) => bot.run(context));
-//     } catch (err) {
-//       next(err);
-//     }
-//   })
-//   // .get('/api/messages', async (req, res, next) => {
-//   //   console.log(Object.keys(res));
-//   //   try {
-//   //     await webSocketConnector.processAsync(req, res, { appId, appPassword });
-//   //   } catch (err) {
-//   //     next(err);
-//   //   }
-//   // })
-//   ;
-
-// const server = app
-//   .listen(PORT, () => console.log(`Listening on ${PORT}. Connect to the bot using the Bot Framework Emulator.`))
-//   .on('upgrade', async (req: IncomingMessage, socket: Socket, head: Buffer) => {
-//     try {
-//       const res = new UpgradedResponse(req, socket, head);
-//       await webSocketConnector.processAsync(req, res, { appId, appPassword });
-//     } catch (err) {
-//       console.error(err);
-//       throw err;
-//     }
-//   })
-//   ;
-
 function startWithRestify(bot: ActivityHandler, adapter: BotFrameworkAdapter, webSocketConnector: WebSocketConnector) {
   const server = restify.createServer({ handleUpgrades: true });
   server.listen(process.env.port || process.env.PORT || 3978, () => {
@@ -98,7 +40,6 @@ function startWithRestify(bot: ActivityHandler, adapter: BotFrameworkAdapter, we
   });
 
   server.get('/api/messages', function handleUpgrades(req, res, next) {
-    // TODO: validate that we can reuse the WebSocketConnector across requests
     webSocketConnector.processAsync(req, res, {
       appId: process.env.MicrosoftAppId,
       appPassword: process.env.MicrosoftAppPassword,
