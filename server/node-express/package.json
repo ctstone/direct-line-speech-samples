@@ -1,5 +1,5 @@
 {
-  "name": "direct-line-speech-server",
+  "name": "bot-streaming-express",
   "version": "1.0.0",
   "description": "Sample Node.js streaming server for Bot Framework",
   "main": "index.js",
