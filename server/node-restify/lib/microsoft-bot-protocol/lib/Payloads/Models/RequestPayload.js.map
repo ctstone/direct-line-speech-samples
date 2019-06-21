@@ -1,0 +1,1 @@
+{"version":3,"file":"RequestPayload.js","sourceRoot":"","sources":["../../../src/Payloads/Models/RequestPayload.ts"],"names":[],"mappings":";;AAEA,MAAa,cAAc;IAKzB,YAAY,IAAY,EAAE,IAAY;QACpC,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;QACjB,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;IACnB,CAAC;CACF;AATD,wCASC"}
