@@ -5,7 +5,7 @@ import { ActivityHandler, BotHandler } from 'botbuilder';
 
 import { voice } from './voice';
 
-const VERSION = '0.6';
+const VERSION = '0.7';
 const LANGUAGE = 'en-US';
 const VOICE_ID = 'Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)';
 

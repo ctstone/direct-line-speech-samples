@@ -32,7 +32,7 @@ export class HelloWorldBot extends ActivityHandler {
     const { name, id } = context.activity.from;
     const { text } = context.activity;
     const speak = this.speaker(`You said: "${text}"`);
-    await context.sendActivity(`[ v${VERSION} ] : ${name || id} said "${text}"`, speak);
+    await context.sendActivity(`[ v${VERSION}:restify ] : ${name || id} said "${text}"`, speak);
     await next();
   }
 }
