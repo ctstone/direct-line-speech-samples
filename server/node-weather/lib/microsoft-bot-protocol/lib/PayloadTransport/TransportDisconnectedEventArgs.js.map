@@ -1,0 +1,1 @@
+{"version":3,"file":"TransportDisconnectedEventArgs.js","sourceRoot":"","sources":["../../src/PayloadTransport/TransportDisconnectedEventArgs.ts"],"names":[],"mappings":";;AAAA,MAAa,8BAA8B;IAIzC,YAAY,MAAe;QACzB,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;IACvB,CAAC;;AALa,oCAAK,GAAmC,IAAI,8BAA8B,EAAE,CAAC;AAD7F,wEAOC"}
