@@ -10,6 +10,7 @@
   },
   "exclude": [
     "lib/**",
-    "dist/**"
+    "dist/**",
+    "../node-lib/**"
   ]
 }
