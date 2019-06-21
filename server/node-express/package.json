@@ -15,10 +15,10 @@
   "dependencies": {
     "botbuilder": "^4.4.0",
     "express": "^4.17.1",
-    "microsoft-bot-protocol": "file:lib/microsoft-bot-protocol",
-    "microsoft-bot-protocol-namedpipe": "file:lib/microsoft-bot-protocol-namedpipe",
-    "microsoft-bot-protocol-streamingextensions": "file:lib/microsoft-bot-protocol-streamingextensions",
-    "microsoft-bot-protocol-websocket": "file:lib/microsoft-bot-protocol-websocket",
+    "microsoft-bot-protocol": "file:./lib/microsoft-bot-protocol",
+    "microsoft-bot-protocol-namedpipe": "file:./lib/microsoft-bot-protocol-namedpipe",
+    "microsoft-bot-protocol-streamingextensions": "file:./lib/microsoft-bot-protocol-streamingextensions",
+    "microsoft-bot-protocol-websocket": "file:./lib/microsoft-bot-protocol-websocket",
     "tsc-watch": "^2.2.1"
   },
   "devDependencies": {
