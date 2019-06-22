@@ -12,8 +12,7 @@ enum MapParam {
   clientId = 'x-ms-client-id',
 }
 
-export interface AddressSearch {
-  query: string;
+export interface AddressSearchOptions {
   limit?: number;
   ofs?: number;
   countrySet?: string[];
@@ -24,6 +23,10 @@ export interface AddressSearch {
   btmRight?: [number, number];
   language?: string;
   extendedPostalCodesFor?: string[];
+}
+
+export interface AddressSearch extends AddressSearchOptions {
+  query: string;
 }
 
 export interface AddressSearchStructured {
@@ -192,14 +195,14 @@ export class AzureMap {
     };
   }
 
-  async searchAddress(options: AddressSearch): Promise<AddressSearchResponse> {
-    const optionalParams: { [key: string]: string | number | boolean } = {};
-    (Object.keys(options) as Array<keyof AddressSearch>)
+  async searchAddress(query: string, options?: AddressSearchOptions): Promise<AddressSearchResponse> {
+    const optionalParams: { [key: string]: string | number | boolean } = { };
+    (Object.keys(options || {}) as Array<keyof AddressSearchOptions>)
       .forEach((k) => {
         const value = options[k];
         optionalParams[k] = Array.isArray(value) ? value.join(',') : value;
       });
-    const params = this.assignParams(optionalParams);
+    const params = this.assignParams(optionalParams, { query });
     return await this.api.get('search/address/json', { params });
   }
 

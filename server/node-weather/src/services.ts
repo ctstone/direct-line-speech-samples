@@ -2,7 +2,8 @@ import { MemoryStorage } from 'botbuilder';
 import { LuisRecognizer } from 'botbuilder-ai';
 import DarkSky = require('dark-sky');
 
-import { AzureMap } from './map';
+import { AzureMap } from './azure-map';
+
 import {
   BOT_SETTINGS,
   DARK_SKY_SETTINGS,

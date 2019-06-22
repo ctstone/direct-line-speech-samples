@@ -51,11 +51,7 @@ az maps account create -g $RG -n $MAPS
 ### 4. Prepare LUIS Model
 
 ```bash
-npm run upload-ludown data/weather.lu $LUIS_AUTHOR_KEY
-```
-
-```bash
-LUIS_APP_ID_WEATHER=<copy from script output>
+LUIS_APP_ID_WEATHER=$(npm run upload-ludown data/weather.lu $LUIS_AUTHOR_KEY)
 ```
 
 ### 5. Create Private Container

@@ -32,11 +32,11 @@ async function main() {
   const apps = await author.apps.list(region, cloud);
   const existing = apps.find((x) => x.name === appName);
   if (existing) {
-    console.warn(`Deleting existing app with name "${existing.name}"`);
+    console.error(`Deleting existing app with name "${existing.name}"`);
     await author.apps.deleteMethod(region, cloud, existing.id);
   }
 
-  console.log(`Importing app with name "${appName}"`);
+  console.error(`Importing app with name "${appName}"`);
 
   luisApp.luis_schema_version = '3.0.0';
   luisApp.versionId = '0.1';
@@ -48,13 +48,13 @@ async function main() {
   const appId = importAppResp.body;
   const versionId = '0.1';
 
-  console.log(`Training app with ID "${appId}"`);
+  console.error(`Training app with ID "${appId}"`);
   await author.train.trainVersion(region, cloud, appId, versionId);
   let completed = [];
   while (true) {
     const statusResp = await author.train.getStatus(region, cloud, appId, versionId);
     completed = statusResp.filter((x) => x.details.status === 'Fail' || x.details.status === 'UpToDate' || x.details.status === 'Success');
-    console.log(`  [ ${completed.length} / ${statusResp.length} ]`);
+    console.error(`  [ ${completed.length} / ${statusResp.length} ]`);
     if (completed.length === statusResp.length) {
       break;
     }
@@ -66,15 +66,15 @@ async function main() {
     throw new Error('Training failed!');
   }
 
-  console.log('Publishing app');
+  console.error('Publishing app');
   await author.apps.publish(region, cloud, appId, { versionId });
 
-  console.log(`Setting app to public`);
+  console.error(`Setting app to public`);
   await author.apps.updateSettings(region, cloud, appId, {isPublic: true});
 
-  console.log('Done!');
+  console.error('Done!\n');
 
-  console.log(`\n\nYour LUIS App Id is:\n\n===> ${appId} <===\n`);
+  console.log(appId);
 }
 
 function delay(ms) {

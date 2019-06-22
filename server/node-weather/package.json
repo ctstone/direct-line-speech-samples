@@ -7,10 +7,9 @@
     "start": "node dist",
     "prepare": "npm run build",
     "build": "tsc",
-    "watch": "tsc-watch --onSuccess \"npm start\"",
-    "luis-parse": "ludown parse toluis --in data/weather.lu",
-    "luis-import": "luis import application --in data/weather.json > data/appId.json",
-    "luis-train": "luis "
+    "start-dev": "node -r dotenv/config dist",
+    "watch": "tsc-watch --onSuccess \"npm run start-dev\"",
+    "luis": "node scripts/upload-ludown"
   },
   "keywords": [],
   "author": "chstone@microsoft.com",
@@ -25,6 +24,7 @@
     "microsoft-bot-protocol-namedpipe": "file:lib/microsoft-bot-protocol-namedpipe",
     "microsoft-bot-protocol-streamingextensions": "file:lib/microsoft-bot-protocol-streamingextensions",
     "microsoft-bot-protocol-websocket": "file:lib/microsoft-bot-protocol-websocket",
+    "moment": "^2.24.0",
     "tsc-watch": "^2.2.1"
   },
   "devDependencies": {
