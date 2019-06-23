@@ -12,8 +12,8 @@ export interface Time {
  * @param candidates sorted list of candidates to compare (timezone adjusted)
  */
 export function findTime<T extends Time>(date: Date, granularity: moment.unitOfTime.StartOf, candidates: T[]): T {
-  const d = date.getTime() / 1000;
-  const time = candidates.find((x, i, array) => d >= x.time && d >= x.time && (!array[i + 1] || d < array[i + 1].time));
+  const timestamp = getTimestamp(date);
+  const time = candidates.find((x, i, array) => timestamp >= x.time && timestamp >= x.time && (!array[i + 1] || timestamp < array[i + 1].time));
   return time && moment(date).isSame(time.time * 1000, granularity) ? time : null;
 }
 
@@ -25,7 +25,15 @@ export function findTime<T extends Time>(date: Date, granularity: moment.unitOfT
  * @param timezone IANA timezone label associated with the candidate times
  */
 export function findTimeRange<T extends Time>(startDate: Date, endDate: Date, candidates: T[]): T[] {
-  const start = startDate.getTime() / 1000;
-  const end = endDate.getTime() / 1000;
+  const start = getTimestamp(startDate);
+  const end = getTimestamp(endDate);
   return candidates.filter((x, i, array) => x.time >= start && x.time < end);
+}
+
+export function createDate(seconds: number) {
+  return new Date(seconds * 1000);
+}
+
+export function getTimestamp(date: Date) {
+  return date.getTime() / 1000;
 }

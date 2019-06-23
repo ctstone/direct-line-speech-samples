@@ -1,7 +1,7 @@
 import * as DarkSky from 'dark-sky';
 
-import { findTime, findTimeRange } from './find-time';
 import { Location, LocationResolver } from './location';
+import { findTime, findTimeRange } from './time';
 
 export interface Forecast {
   location: Location;

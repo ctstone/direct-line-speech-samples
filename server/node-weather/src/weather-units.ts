@@ -1,7 +1,9 @@
 import DarkSky = require('dark-sky');
 
-export function getUnits(key: keyof (DarkSky.DataPoint & DarkSky.DataPointCurrently & DarkSky.DataPointHourly & DarkSky.DataPointDaily), units: DarkSky.Units) {
-  switch (key) {
+export type DarkSkyFeature = keyof (DarkSky.DataPoint & DarkSky.DataPointCurrently & DarkSky.DataPointHourly & DarkSky.DataPointDaily);
+
+export function getUnits(feature: DarkSkyFeature, unitsType: DarkSky.Units) {
+  switch (feature) {
     case 'temperature':
     case 'temperatureMin':
     case 'temperatureMax':
@@ -9,24 +11,27 @@ export function getUnits(key: keyof (DarkSky.DataPoint & DarkSky.DataPointCurren
     case 'temperatureHigh':
     case 'apparentTemperature':
     case 'dewPoint':
-      return getTemperatureUnits(units);
+      return getTemperatureUnits(unitsType);
 
     case 'nearestStormDistance':
     case 'visibility':
-      return getDistanceUnits(units);
+      return getDistanceUnits(unitsType);
 
     case 'precipIntensity':
     case 'precipIntensityMax':
-      return getPrecipIntensityUnits(units);
+      return getPrecipIntensityUnits(unitsType);
 
     case 'precipAccumulation':
-      return getPrecipUnits(units);
+      return getPrecipUnits(unitsType);
 
     case 'windSpeed':
-      return getSpeedUnits(units);
+      return getSpeedUnits(unitsType);
 
     case 'pressure':
-      return getPressureUnits(units);
+      return getPressureUnits(unitsType);
+
+    case 'cloudCover':
+      return '%';
 
     default:
       return '';
