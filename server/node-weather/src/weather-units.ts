@@ -31,6 +31,7 @@ export function getUnits(feature: DarkSkyFeature, unitsType: DarkSky.Units) {
       return getPressureUnits(unitsType);
 
     case 'cloudCover':
+    case 'precipProbability':
       return '%';
 
     default:
