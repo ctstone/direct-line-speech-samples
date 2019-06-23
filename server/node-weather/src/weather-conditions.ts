@@ -10,6 +10,7 @@ export type WeatherFeature
   | 'temperature'
   | 'apparentTemperatureHigh'
   | 'apparentTemperatureLow'
+  | 'apparentTemperature'
   | 'precipIntensity'
   | 'precipAccumulation'
   | 'precipProbability'
@@ -35,6 +36,11 @@ export interface WeatherValue {
   feature: DarkSkyFeature;
   value: number;
   units: string;
+}
+
+export interface DateRange {
+  start: Date;
+  end: Date;
 }
 
 export class WeatherConditions {
@@ -74,6 +80,9 @@ export class WeatherConditions {
         atDate = createDate(day.apparentTemperatureLowTime);
         break;
 
+      case 'apparentTemperature':
+        value = (day.apparentTemperatureHigh + day.apparentTemperatureLow) / 2;
+
       case 'precipIntensity':
         value = day.precipIntensity;
         precipType = day.precipType;
@@ -100,6 +109,7 @@ export class WeatherConditions {
       case 'windSpeed':
         value = day.windSpeed;
         wind = getWindConditionForDay(day, unitsType);
+        break;
 
       case 'humidity':
         value = day.humidity;
@@ -107,6 +117,70 @@ export class WeatherConditions {
     }
 
     return { feature, value, units, atDate, precipType, wind };
+  }
+
+  async forTime(place: string, time: Date, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherCondition> {
+    const forecast = await this.forecast.forTime(place, time);
+    const units = getUnits(feature as DarkSkyFeature, unitsType);
+    const { hour } = forecast;
+
+    let value: number;
+    let wind: WindCondition;
+    let precipType: string;
+
+    switch (feature) {
+      case 'temperatureHigh':
+      case 'temperatureLow':
+      case 'temperature':
+        value = hour.temperature;
+        break;
+
+      case 'apparentTemperatureHigh':
+      case 'apparentTemperatureLow':
+      case 'apparentTemperature':
+        value = hour.apparentTemperature;
+        break;
+
+      case 'precipIntensity':
+        value = hour.precipIntensity;
+        precipType = hour.precipType;
+        break;
+
+      case 'precipAccumulation':
+        value = hour.precipAccumulation;
+        precipType = hour.precipType;
+        break;
+
+      case 'cloudCover':
+        value = hour.cloudCover;
+        break;
+
+      case 'pressure':
+        value = hour.pressure;
+        break;
+
+      case 'windSpeed':
+        value = hour.windSpeed;
+        wind = getWindCondition(hour, unitsType);
+        break;
+
+      case 'humidity':
+        value = hour.humidity;
+        break;
+
+    }
+
+    return { feature, value, units, precipType, wind };
+  }
+
+  async forDateRange(place: string, dateRange: DateRange, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherCondition> {
+    const { start, end } = dateRange;
+    const forecast = await this.forecast.forDateRange(place, start, end);
+    const { daily } = forecast;
+
+    switch (feature) {
+      // TODO
+    }
   }
 }
 
