@@ -5,6 +5,14 @@ export interface Time {
   time: number;
 }
 
+export type DateType
+  = 'date' // tomorrow
+  | 'datetime' // tonight
+  | 'daterange' // this week
+  | 'time' // 10 am
+  | 'datetimerange' // tomorrow afternoon
+  | 'timerange'; // from 10 am to 12 pm
+
 /**
  * Find the latest candidate with a date that is less than a target date.
  * @param date the time to look for
@@ -36,4 +44,14 @@ export function createDate(seconds: number) {
 
 export function getTimestamp(date: Date) {
   return date.getTime() / 1000;
+}
+
+/** Return a date object representing the given time as of today */
+export function parseTime(time: string) {
+  const [hours, minutes, seconds] = time.split(':').map((x) => +x);
+  return moment.utc().set({ hours, minutes, seconds }).toDate();
+}
+
+export function resolveDate(text: string, type: DateType, timezone: string) {
+
 }

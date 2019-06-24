@@ -4,12 +4,13 @@ import DarkSky = require('dark-sky');
 
 import { AzureMap } from './azure-map';
 
+import { LocationResolver } from './location';
 import {
-  BOT_SETTINGS,
   DARK_SKY_SETTINGS,
   LUIS_SETTINGS,
   MAP_SETTINGS,
 } from './settings';
+import { WeatherForecast } from './weather-forecast';
 
 export function createStorage() {
   return new MemoryStorage();
@@ -32,4 +33,15 @@ export function createAzureMap() {
 export function createDarkSky() {
   const { key } = DARK_SKY_SETTINGS;
   return new DarkSky(key);
+}
+
+export function createLocationResolver() {
+  const map = createAzureMap();
+  return new LocationResolver(map);
+}
+
+export function createWeatherForecast() {
+  const locationResolver = createLocationResolver();
+  const darkSky = createDarkSky();
+  return new WeatherForecast(locationResolver, darkSky);
 }

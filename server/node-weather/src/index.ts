@@ -3,17 +3,20 @@
 
 import * as express from 'express';
 
-import { HelloWorldBot } from './bot';
+import { WeatherBot } from './bot';
 import { BotFrameworkAdapterMiddleware } from './helpers/bot-framework-adapter-middleware';
 import { BotFrameworkAdapterWebSocket } from './helpers/bot-framework-adapter-ws';
 import { tokenGenerator } from './helpers/generate-token-middleware';
+import { createWeatherForecast, createWeatherRecognizer } from './services';
 import { BOT_SETTINGS, PORT } from './settings';
 
 const { appId, appPassword, endpoint, directLineKey } = BOT_SETTINGS;
 
 const adapter = new BotFrameworkAdapterMiddleware({ appId, appPassword });
 const webSocketAdapter = new BotFrameworkAdapterWebSocket({ appId, appPassword, endpoint });
-const bot = new HelloWorldBot();
+const recognizer = createWeatherRecognizer();
+const weatherForecast = createWeatherForecast();
+const bot = new WeatherBot(recognizer, weatherForecast);
 const server = express()
   .get('/api/token', tokenGenerator(directLineKey))
   .post(endpoint, adapter.connect(bot))
