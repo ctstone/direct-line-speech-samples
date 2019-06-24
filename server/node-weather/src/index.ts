@@ -18,7 +18,8 @@ const recognizer = createWeatherRecognizer();
 const weatherForecast = createWeatherForecast();
 const bot = new WeatherBot(recognizer, weatherForecast);
 const server = express()
-  .get('/api/token', tokenGenerator(directLineKey))
+  .use(express.static(`${__dirname}/../public`))
+  .use('/api/tokens/generate', tokenGenerator(directLineKey))
   .post(endpoint, adapter.connect(bot))
   .listen(PORT, () => console.log(`Listening on ${PORT}. Connect to the bot using the Bot Framework Emulator.`));
 

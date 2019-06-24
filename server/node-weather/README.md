@@ -16,7 +16,7 @@ LUIS=my-luis
 MAPS=my-maps
 LUIS_AUTHOR_KEY=<required>
 DARK_SKY_KEY=<required>
-PW=$(openssl rand -base64 16)
+PW=$(openssl rand -base64 16)1!
 ```
 
 Check your active subscription
@@ -56,7 +56,10 @@ LUIS_APP_ID_WEATHER=$(npm run upload-ludown data/weather.lu $LUIS_AUTHOR_KEY)
 
 ### 5. Create Private Container
 
+> Run these commands from the same directory containing `package.json`
+
 ```bash
+npm run build
 az acr create -g $RG -n $ACR --sku Standard --admin-enabled
 az acr build -g $RG -r $ACR -t $IMAGE:latest -t $IMAGE:{{.Run.ID}} .
 ```
@@ -92,9 +95,8 @@ az webapp config appsettings set -g $RG -n $BOT --settings \
   LUIS_SUBSCRIPTION_REGION=$LUIS_SUBSCRIPTION_REGION \
   LUIS_SUBSCRIPTION_KEY=$LUIS_SUBSCRIPTION_KEY \
   MAP_KEY=$MAP_KEY \
-  LUIS_APP_ID_WEATHER=$LUIS_APP_ID_WEATHER
+  LUIS_APP_ID_WEATHER=$LUIS_APP_ID_WEATHER \
   DARK_SKY_KEY=$DARK_SKY_KEY
-
 
 az webapp config container set -g $RG --name $BOT \
   --docker-custom-image-name $ACR.azurecr.io/$IMAGE:latest \
@@ -113,7 +115,7 @@ az webapp config container set -g $RG --name $BOT \
 6.  Click the `Direct Line Speech` icon
 7.  _Copy one of the __Secret Keys__ for later use_ (`DIRECT_LINE_SPEECH_KEY`)
 8.  Click `Save` 
-9.  Go back to the main `Channels` page
+<!-- 9.  Go back to the main `Channels` page
 10. Click `Edit` next to `Direct Line`
 11. _Copy one of the __App Service Extensions Keys__ for later use_ (`DIRECT_LINE_EXTENSION_KEY`)
 
@@ -139,7 +141,7 @@ Enable WebSockets (Windows/.NET only?)
 
 ```bash
 az webapp config set -g $RG -n $BOT --web-sockets-enabled true
-```
+``` -->
 
 ### 10. Configure Speech Service
 
