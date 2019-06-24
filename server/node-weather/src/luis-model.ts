@@ -40,3 +40,8 @@ export enum WeatherPrecipitation {
   snow = 'snow',
   sleet = 'sleet',
 }
+
+export enum WeatherGear {
+  raincoat = 'raincoat',
+  umbrella = 'umbrella',
+}

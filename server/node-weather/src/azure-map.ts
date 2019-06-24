@@ -196,30 +196,34 @@ export class AzureMap {
   }
 
   async searchAddress(query: string, options?: AddressSearchOptions): Promise<AddressSearchResponse> {
-    const optionalParams: { [key: string]: string | number | boolean } = { };
+    const optionalParams: { [key: string]: string | number | boolean } = {};
     (Object.keys(options || {}) as Array<keyof AddressSearchOptions>)
       .forEach((k) => {
         const value = options[k];
         optionalParams[k] = Array.isArray(value) ? value.join(',') : value;
       });
     const params = this.assignParams(optionalParams, { query });
-    return await this.api.get('search/address/json', { params });
+    const resp = await this.api.get('search/address/json', { params });
+    return resp.data;
   }
 
   async searchAddressStructured(options: AddressSearchStructured): Promise<AddressSearchResponse> {
     const params = this.assignParams(options);
-    return await this.api.get('search/address/structured/json', { params });
+    const resp = await this.api.get('search/address/structured/json', { params });
+    return resp.data;
   }
 
   async searchAddressReverse(options: AddressSearchReverse): Promise<AddressSearchReverseResponse> {
     const params = this.assignParams(options);
-    return await this.api.get('search/address/reverse/json', { params });
+    const resp = await this.api.get('search/address/reverse/json', { params });
+    return resp.data;
   }
 
   async getTimezoneByCoordinates(coordinates: [number, number], options?: TimezoneQuery, language?: string): Promise<TimezoneResponse> {
     const params = this.assignParams({ query: coordinates.join(',') }, options);
-    const headers = { 'Accept-Language': language };
-    return await this.api.get('timezone/byCoordinates/json', { params, headers });
+    const headers = language ? { 'Accept-Language': language } : null;
+    const resp = await this.api.get('timezone/byCoordinates/json', { params, headers });
+    return resp.data;
   }
 
   private assignParams(...params: any[]) {

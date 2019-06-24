@@ -4,14 +4,12 @@ const fs = require('fs');
 const path = require('path');
 const msRest = require('ms-rest-js');
 
-const [,, fileName, authorKey, userCulture, userAppName] = process.argv;
+const [, , fileName, authorKey, userCulture, userAppName] = process.argv;
 
 if (!fileName || !authorKey) {
   console.error('Usage: upload-ludown <file> <authorKey> [culture] [appName]');
   process.exit(1);
 }
-
-
 
 main().catch((err) => {
   console.error(err);
@@ -28,7 +26,7 @@ async function main() {
   const content = fs.readFileSync(path.join(__dirname, fileName), 'utf8');
   const parsed = await ludown.parser.parseFile(content, false, culture);
   const luisApp = parsed.LUISJsonStructure;
-  
+
   const apps = await author.apps.list(region, cloud);
   const existing = apps.find((x) => x.name === appName);
   if (existing) {
@@ -70,7 +68,7 @@ async function main() {
   await author.apps.publish(region, cloud, appId, { versionId });
 
   console.error(`Setting app to public`);
-  await author.apps.updateSettings(region, cloud, appId, {isPublic: true});
+  await author.apps.updateSettings(region, cloud, appId, { isPublic: true });
 
   console.error('Done!\n');
 

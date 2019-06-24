@@ -2,6 +2,10 @@ import DarkSky = require('dark-sky');
 
 export type DarkSkyFeature = keyof (DarkSky.DataPoint & DarkSky.DataPointCurrently & DarkSky.DataPointHourly & DarkSky.DataPointDaily);
 
+export function getUnitsFor(unitsType: DarkSky.Units) {
+  return (feature: DarkSkyFeature) => getUnits(feature, unitsType);
+}
+
 export function getUnits(feature: DarkSkyFeature, unitsType: DarkSky.Units) {
   switch (feature) {
     case 'temperature':
@@ -26,6 +30,9 @@ export function getUnits(feature: DarkSkyFeature, unitsType: DarkSky.Units) {
 
     case 'windSpeed':
       return getSpeedUnits(unitsType);
+
+    case 'windBearing':
+      return 'degrees';
 
     case 'pressure':
       return getPressureUnits(unitsType);

@@ -2,7 +2,7 @@ import { AzureMap } from './azure-map';
 
 export type Latitude = number;
 export type Longitude = number;
-export type Coordinates = [ Latitude, Longitude ];
+export type Coordinates = [Latitude, Longitude];
 
 export interface Location {
   coordinates: Coordinates;
@@ -28,7 +28,7 @@ export class LocationResolver {
       if (timezoneResp.TimeZones.length) {
         const description = freeformAddress;
         const type = entityType;
-        const [ { Id: timezone } ] = timezoneResp.TimeZones;
+        const [{ Id: timezone }] = timezoneResp.TimeZones;
         return { coordinates, timezone, description, type } as Location;
       }
     }
