@@ -1,11 +1,12 @@
 import * as DarkSky from 'dark-sky';
 
 import { Location, LocationResolver } from './location';
-import { findTime, findTimeRange } from './time';
+import { DateTime, findTime, findTimeRange, RelativeDateTime, resolveDate } from './time';
 
 export interface Forecast {
   location: Location;
   flags: DarkSky.Flags;
+  date: DateTime;
   currently?: DarkSky.DataPointCurrently;
   hourly?: DarkSky.DataPointHourly[];
   daily?: DarkSky.DataPointDaily[];
@@ -17,38 +18,61 @@ export class WeatherForecast {
   constructor(private loc: LocationResolver, private ds: DarkSky) {
   }
 
-  async forDate(place: string, date: Date, unitsType: DarkSky.Units): Promise<Forecast> {
+  lookup(place: string, relativeDate: RelativeDateTime, unitsType: DarkSky.Units) {
+    switch (relativeDate.type) {
+      case 'date':
+      case 'datetime':
+        return this.forDate(place, relativeDate, unitsType);
+
+      case 'time':
+        return this.forTime(place, relativeDate, unitsType);
+
+      case 'daterange':
+      case 'datetimerange':
+        return this.forDateRange(place, relativeDate, unitsType);
+
+      case 'timerange':
+        return this.forTimeRange(place, relativeDate, unitsType);
+    }
+  }
+
+  async forDate(place: string, relativeDate: RelativeDateTime, unitsType: DarkSky.Units): Promise<Forecast> {
     const location = await this.loc.resolve(place);
     const { daily, flags } = await this.getWeather(location, unitsType);
-    const day = findTime(date, 'day', daily.data);
-    return { location, day, flags };
+    const date = resolveDate(relativeDate, location.timezone);
+    const day = findTime(date.start, 'day', daily.data);
+    return { location, day, flags, date };
   }
 
-  async forTime(place: string, time: Date, unitsType: DarkSky.Units): Promise<Forecast> {
+  async forTime(place: string, relativeTime: RelativeDateTime, unitsType: DarkSky.Units): Promise<Forecast> {
     const location = await this.loc.resolve(place);
     const { hourly, flags } = await this.getWeather(location, unitsType);
-    const hour = findTime(time, 'hour', hourly.data);
-    return { location, hour, flags };
+    const date = resolveDate(relativeTime, location.timezone);
+    const hour = findTime(date.start, 'hour', hourly.data);
+    return { location, hour, flags, date };
   }
 
-  async forDateRange(place: string, startDate: Date, endDate: Date, unitsType: DarkSky.Units): Promise<Forecast> {
+  async forDateRange(place: string, relativeDate: RelativeDateTime, unitsType: DarkSky.Units): Promise<Forecast> {
     const location = await this.loc.resolve(place);
     const { daily: allDaily, flags } = await this.getWeather(location, unitsType);
-    const daily = findTimeRange(startDate, endDate, allDaily.data);
-    return { location, daily, flags };
+    const date = resolveDate(relativeDate, location.timezone);
+    const daily = findTimeRange(date.start, date.end, allDaily.data);
+    return { location, daily, flags, date };
   }
 
-  async forTimeRange(place: string, startTime: Date, endTime: Date, unitsType: DarkSky.Units): Promise<Forecast> {
+  async forTimeRange(place: string, relativeTime: RelativeDateTime, unitsType: DarkSky.Units): Promise<Forecast> {
     const location = await this.loc.resolve(place);
     const { hourly: allHourly, flags } = await this.getWeather(location, unitsType);
-    const hourly = findTimeRange(startTime, endTime, allHourly.data);
-    return { location, hourly, flags };
+    const date = resolveDate(relativeTime, location.timezone);
+    const hourly = findTimeRange(date.start, date.end, allHourly.data);
+    return { location, hourly, flags, date };
   }
 
   async forCurrent(place: string, unitsType: DarkSky.Units): Promise<Forecast> {
     const location = await this.loc.resolve(place);
     const { currently, flags } = await this.getWeather(location, unitsType);
-    return { location, currently, flags };
+    const date: DateTime = { type: 'datetime', start: new Date() };
+    return { location, currently, flags, date };
   }
 
   private async getWeather(location: Location, unitsType: DarkSky.Units) {

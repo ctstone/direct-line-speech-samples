@@ -1,6 +1,6 @@
 import * as DarkSky from 'dark-sky';
 
-import { createDate } from './time';
+import { createDate, RelativeDateTime } from './time';
 import { WeatherForecast } from './weather-forecast';
 import { DarkSkyFeature, getUnits } from './weather-units';
 
@@ -52,8 +52,26 @@ export interface DateRange {
 export class WeatherConditions {
   constructor(private forecast: WeatherForecast) { }
 
-  async forDate(place: string, date: Date, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherCondition> {
-    const forecast = await this.forecast.forDate(place, date, unitsType);
+  lookup(place: string, relativeDate: RelativeDateTime, feature: WeatherFeature, unitsType: DarkSky.Units) {
+    switch (relativeDate.type) {
+      case 'date':
+      case 'datetime':
+        return this.forDate(place, relativeDate, feature, unitsType);
+
+      case 'time':
+        return this.forTime(place, relativeDate, feature, unitsType);
+
+      case 'daterange':
+      case 'datetimerange':
+        return this.forDateRange(place, relativeDate, feature, unitsType);
+
+      case 'timerange':
+        return this.forTimeRange(place, relativeDate, feature, unitsType);
+    }
+  }
+
+  async forDate(place: string, relativeDate: RelativeDateTime, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherCondition> {
+    const forecast = await this.forecast.forDate(place, relativeDate, unitsType);
     const { day, flags } = forecast;
     const units = getUnits(feature as DarkSkyFeature, flags.units);
 
@@ -125,8 +143,8 @@ export class WeatherConditions {
     return { value, units, atDate, precipType, wind };
   }
 
-  async forTime(place: string, time: Date, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherCondition> {
-    const forecast = await this.forecast.forTime(place, time, unitsType);
+  async forTime(place: string, relativeTime: RelativeDateTime, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherCondition> {
+    const forecast = await this.forecast.forTime(place, relativeTime, unitsType);
     const { hour, flags } = forecast;
     const units = getUnits(feature as DarkSkyFeature, flags.units);
 
@@ -178,9 +196,8 @@ export class WeatherConditions {
     return { value, units, precipType, wind };
   }
 
-  async forDateRange(place: string, dateRange: DateRange, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherConditionRange> {
-    const { start, end } = dateRange;
-    const forecast = await this.forecast.forDateRange(place, start, end, unitsType);
+  async forDateRange(place: string, relativeDate: RelativeDateTime, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherConditionRange> {
+    const forecast = await this.forecast.forDateRange(place, relativeDate, unitsType);
     const { daily, flags } = forecast;
     const units = getUnits(feature as DarkSkyFeature, flags.units);
     const values: WeatherValue[] = [];
@@ -268,9 +285,8 @@ export class WeatherConditions {
     return { dates, values, wind, precipTypes };
   }
 
-  async forTimeRange(place: string, timeRange: DateRange, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherConditionRange> {
-    const { start, end } = timeRange;
-    const forecast = await this.forecast.forDateRange(place, start, end, unitsType);
+  async forTimeRange(place: string, relativeTime: RelativeDateTime, feature: WeatherFeature, unitsType: DarkSky.Units): Promise<WeatherConditionRange> {
+    const forecast = await this.forecast.forDateRange(place, relativeTime, unitsType);
     const { hourly, flags } = forecast;
     const units = getUnits(feature as DarkSkyFeature, flags.units);
 

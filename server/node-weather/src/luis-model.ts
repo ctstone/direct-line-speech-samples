@@ -40,13 +40,3 @@ export enum WeatherPrecipitation {
   snow = 'snow',
   sleet = 'sleet',
 }
-
-export type DateTimeType = 'date' | 'daterange' | 'datetime' | 'time' | 'timerange' | 'datetimerange' | 'duration' | 'set';
-
-export interface DateTime {
-  type: DateTimeType;
-  timex: string;
-  value?: string;
-  start?: string;
-  end?: string;
-}

@@ -1,17 +1,33 @@
 import * as moment from 'moment';
+import 'moment-timezone';
 
 export interface Time {
   /** UNIX epoch in seconds */
   time: number;
 }
 
-export type DateType
+export type DateTimeType
   = 'date' // tomorrow
-  | 'datetime' // tonight
   | 'daterange' // this week
-  | 'time' // 10 am
+  | 'datetime' // tonight
   | 'datetimerange' // tomorrow afternoon
-  | 'timerange'; // from 10 am to 12 pm
+  | 'time' // 10 am
+  | 'timerange' // from 10 am to 12 pm
+  | 'duration'
+  | 'set';
+
+export interface RelativeDateTime {
+  type: DateTimeType;
+  value?: string;
+  start?: string;
+  end?: string;
+}
+
+export interface DateTime {
+  type: DateTimeType;
+  start: Date;
+  end?: Date;
+}
 
 /**
  * Find the latest candidate with a date that is less than a target date.
@@ -47,11 +63,38 @@ export function getTimestamp(date: Date) {
 }
 
 /** Return a date object representing the given time as of today */
-export function parseTime(time: string) {
+export function parseTime(time: string, timezone: string) {
   const [hours, minutes, seconds] = time.split(':').map((x) => +x);
-  return moment.utc().set({ hours, minutes, seconds }).toDate();
+  return moment.tz(timezone).set({ hours, minutes, seconds }).toDate();
 }
 
-export function resolveDate(text: string, type: DateType, timezone: string) {
+export function resolveDate(relativeDateTime: RelativeDateTime, timezone: string): DateTime {
+  const { type, value: dateText, start: startText, end: endText } = relativeDateTime;
 
+  let start: Date;
+  let end: Date;
+
+  switch (type) {
+    case 'date':
+    case 'datetime':
+      start = moment.tz(dateText, timezone).toDate();
+      break;
+
+    case 'daterange':
+    case 'datetimerange':
+      start = moment.tz(startText, timezone).toDate();
+      end = moment.tz(endText, timezone).toDate();
+      break;
+
+    case 'time':
+      start = parseTime(dateText, timezone);
+      break;
+
+    case 'timerange':
+      start = parseTime(startText, timezone);
+      end = parseTime(endText, timezone);
+      break;
+  }
+
+  return { type, start, end };
 }

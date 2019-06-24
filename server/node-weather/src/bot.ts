@@ -5,18 +5,13 @@ import { Culture, recognizeDateTime } from '@microsoft/recognizers-text-date-tim
 import { ActivityHandler, BotHandler, RecognizerResult, TurnContext } from 'botbuilder';
 import { LuisRecognizer } from 'botbuilder-ai';
 
-import { DateTime, WeatherEntity } from './luis-model';
+import { WeatherEntity } from './luis-model';
+import { RelativeDateTime, DateTime } from './time';
 import { voice } from './voice';
 import { WeatherForecast } from './weather-forecast';
 
 const LANGUAGE = 'en-US';
 const VOICE_ID = 'Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)';
-
-interface WeatherDate {
-  start: Date;
-  end?: Date;
-  type: string;
-}
 
 export class WeatherBot extends ActivityHandler {
 
@@ -55,10 +50,13 @@ export class WeatherBot extends ActivityHandler {
   }
 
   private async getWeatherForecast(context: TurnContext, recognized: RecognizerResult) {
+    const place = this.getPlaceEntity(recognized);
+    const relativeDateTime = this.getRelativeDateEntity(recognized, Culture.English);
+
     return await context.sendActivity('...');
   }
 
-  private getLocationEntity(recognized: RecognizerResult) {
+  private getPlaceEntity(recognized: RecognizerResult): string {
     const { entities } = recognized;
     return entities[WeatherEntity.location]
       || entities[WeatherEntity.city]
@@ -70,16 +68,11 @@ export class WeatherBot extends ActivityHandler {
     // TODO prompt for Location if missing
   }
 
-  private getDateEntities(recognized: RecognizerResult, culture: string) {
+  private getRelativeDateEntity(recognized: RecognizerResult, culture: string): RelativeDateTime {
     const [{ text }] = recognized.entities.$instance[WeatherEntity.datetime];
     const [dateTime] = recognizeDateTime(text, culture);
-    const [past, future] = dateTime.resolution.values as [DateTime, DateTime];
-    const { type, value: dateText, start: startText, end: endText, timex } = future || past;
-
-    let startDate: Date;
-    let endDate: Date;
-
-    if ()
+    const [past, future] = dateTime.resolution.values as [RelativeDateTime, RelativeDateTime];
+    return future || past;
   }
 
 }
