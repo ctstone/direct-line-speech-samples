@@ -2,7 +2,7 @@ import { ActivityHandler, BotFrameworkAdapterSettings } from 'botbuilder';
 import { IncomingMessage, Server } from 'http';
 import { WebSocketConnector } from 'microsoft-bot-protocol-streamingextensions';
 import { Socket } from 'net';
-import * as url from 'url';
+import url from 'url';
 import { UpgradedResponse } from './upgraded-response';
 
 export interface Settings extends Partial<BotFrameworkAdapterSettings> {

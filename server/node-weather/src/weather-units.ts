@@ -1,4 +1,4 @@
-import DarkSky = require('dark-sky');
+import DarkSky from 'dark-sky';
 
 export type DarkSkyFeature = keyof (DarkSky.DataPoint & DarkSky.DataPointCurrently & DarkSky.DataPointHourly & DarkSky.DataPointDaily);
 
