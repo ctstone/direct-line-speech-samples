@@ -29,6 +29,7 @@ export function getUnits(feature: DarkSkyFeature, unitsType: DarkSky.Units) {
       return getPrecipUnits(unitsType);
 
     case 'windSpeed':
+    case 'windGust':
       return getSpeedUnits(unitsType);
 
     case 'windBearing':
