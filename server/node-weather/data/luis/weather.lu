@@ -17,8 +17,6 @@
 - what is the temperature
 - how much will it rain in {Weather.Location=Boston} tomorrow?
 - how windy is it in {Weather.Location=Boston}?
-
-## Weather.Conditions.YesNo
 - do i need an umbrella today
 - is it going to snow today
 - is it raining?
@@ -38,7 +36,6 @@
 - will it rain this weekend
 
 ## Weather.GetForecast
-- forecast in celcius
 - get the forcast for me
 - what is the weather in {Weather.Location=Boston}
 - i want to know the temperature at {Weather.Location=death valley}

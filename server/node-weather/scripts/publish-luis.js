@@ -4,10 +4,14 @@ const fs = require('fs');
 const path = require('path');
 const msRest = require('ms-rest-js');
 
-const [, , fileName, authorKey, userCulture, userAppName] = process.argv;
+const [, , userAuthorKey, userCulture, userAppName, userFile] = process.argv;
+
+const authorKey = userAuthorKey || process.env.LUIS_AUTHOR_KEY;
+const fileName = userFile || path.resolve(__dirname, '..', 'data', 'luis', 'weather.lu');
 
 if (!fileName || !authorKey) {
-  console.error('Usage: upload-ludown <file> <authorKey> [culture] [appName]');
+  console.error('Usage: publish-luis [<authorKey>] [culture] [appName] [filePath]');
+  console.error('\nOr set environment variable LUIS_AUTHOR_KEY=key')
   process.exit(1);
 }
 
@@ -23,7 +27,7 @@ async function main() {
   const appName = userAppName || 'WeatherDemo';
   const creds = new msRest.ApiKeyCredentials({ inHeader: { "Ocp-Apim-Subscription-Key": authorKey } });
   const author = new luis.LuisAuthoring(creds);
-  const content = fs.readFileSync(path.join(__dirname, fileName), 'utf8');
+  const content = fs.readFileSync(fileName, 'utf8');
   const parsed = await ludown.parser.parseFile(content, false, culture);
   const luisApp = parsed.LUISJsonStructure;
 

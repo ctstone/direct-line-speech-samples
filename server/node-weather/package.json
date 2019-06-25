@@ -9,7 +9,8 @@
     "build": "tsc",
     "start-dev": "node -r dotenv/config dist",
     "watch": "tsc-watch --onSuccess \"npm run start-dev\"",
-    "luis": "node scripts/publish-ludown"
+    "publish-luis": "node -r dotenv/config scripts/publish-luis",
+    "refresh-luis": "node -r dotenv/config scripts/refresh-luis"
   },
   "keywords": [],
   "author": "chstone@microsoft.com",
