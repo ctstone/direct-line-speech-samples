@@ -1,6 +1,7 @@
 import { Middleware, TurnContext } from 'botbuilder';
 
-export type VoiceForLocaleCallback = (locale: string) => PromiseLike<VoiceDefinition>;
+export type VoiceCallback = (locale: string) => PromiseLike<VoiceDefinition>;
+export type SsmlGeneratorCallback = (locale: string) => PromiseLike<SpeechHandler>;
 export type SpeechHandler = (text: string) => string;
 
 export interface VoiceDefinition {
@@ -10,28 +11,25 @@ export interface VoiceDefinition {
 
 export interface SpeechOptions {
   defaultVoice?: VoiceDefinition;
-  voiceForLocale?: VoiceForLocaleCallback;
+  voiceForLocale?: VoiceCallback;
+  ssmlForLocale?: SsmlGeneratorCallback;
 }
 
-const VOICE_LANGUAGE = 'en-US';
-const VOICE_ID = 'Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)';
+export const DEFAULT_VOICE: VoiceDefinition = {
+  language: 'en-US',
+  voiceId: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)',
+};
 
 export class SpeechBotMiddleware implements Middleware {
   constructor(private options?: SpeechOptions) {
     this.options = options || { };
-    if (!this.options.defaultVoice) {
-      this.options.defaultVoice = {
-        language: VOICE_LANGUAGE,
-        voiceId: VOICE_ID,
-      };
-    }
+    this.options.defaultVoice = this.options.defaultVoice || DEFAULT_VOICE;
   }
 
   onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
     context.onSendActivities(async (ctx, activities, next) => {
       const { locale } = ctx.activity;
-      const { voiceId, language } = await this.getVoice(locale);
-      const say = voice(voiceId, language);
+      const say = await this.getSsmlGenerator(locale);
 
       for (const activity of activities) {
         if (activity.text && !activity.speak) {
@@ -44,15 +42,24 @@ export class SpeechBotMiddleware implements Middleware {
     return next();
   }
 
+  private async getSsmlGenerator(locale: string) {
+    const { ssmlForLocale } = this.options;
+
+    return ssmlForLocale
+      ? await ssmlForLocale(locale)
+      : await this.getVoice(locale);
+  }
+
   private async getVoice(locale: string) {
     const { defaultVoice, voiceForLocale } = this.options;
-    let voice;
+    let voiceDef;
 
     if (voiceForLocale) {
-      voice = await voiceForLocale(locale);
+      voiceDef = await voiceForLocale(locale);
     }
 
-    return voice || defaultVoice;
+    const { voiceId, language } = voiceDef || defaultVoice;
+    return voice(voiceId, language);
   }
 }
 
