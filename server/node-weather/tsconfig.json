@@ -6,7 +6,8 @@
     "removeComments": false,
     "sourceMap": true,
     "outDir": "./dist",
-    "declaration": true
+    "declaration": true,
+    "esModuleInterop": true
   },
   "exclude": [
     "lib/**",

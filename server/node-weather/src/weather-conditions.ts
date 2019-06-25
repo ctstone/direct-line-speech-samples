@@ -1,4 +1,4 @@
-import * as DarkSky from 'dark-sky';
+import { DataPoint, DataPointDaily, DataPointHourly } from 'dark-sky';
 
 import { createDate, RelativeDateTime } from './time';
 import { Forecast, WeatherForecast, WeatherOptions } from './weather-forecast';
@@ -226,9 +226,9 @@ export class WeatherForecastConditions {
       const precips: Precipitation[] = [];
       const wind: WindCondition[] = [];
 
-      let day: DarkSky.DataPointDaily;
+      let day: DataPointDaily;
 
-      const addValue = (day: DarkSky.DataPointDaily, value: number, date?: number) => {
+      const addValue = (day: DataPointDaily, value: number, date?: number) => {
         values.push({ value, units });
         dates.push(createDate(date || day.time));
       };
@@ -310,9 +310,9 @@ export class WeatherForecastConditions {
       const precips: Precipitation[] = [];
       const wind: WindCondition[] = [];
 
-      let hour: DarkSky.DataPointHourly;
+      let hour: DataPointHourly;
 
-      const addValue = (hour: DarkSky.DataPointHourly, value: number, date?: number) => {
+      const addValue = (hour: DataPointHourly, value: number, date?: number) => {
         values.push({ value, units });
         dates.push(createDate(date || hour.time));
       };
@@ -392,13 +392,13 @@ function minBy<T>(items: T[], fn: (x: T) => number) {
   return items.reduce((m, x) => fn(x) < fn(m) ? x : m);
 }
 
-function getWindConditionForDay(day: DarkSky.DataPointDaily, options: WeatherOptions = {}) {
+function getWindConditionForDay(day: DataPointDaily, options: WeatherOptions = {}) {
   const wind = getWindCondition(day, options);
   wind.gustTime = createDate(day.windGustTime);
   return wind;
 }
 
-function getWindCondition(dataPoint: DarkSky.DataPoint, options: WeatherOptions = {}): WindCondition {
+function getWindCondition(dataPoint: DataPoint, options: WeatherOptions = {}): WindCondition {
   const { windSpeed, windBearing, windGust } = dataPoint;
   const getUnits = getUnitsFor(options.units || DEFAULT_UNITS);
   const speed: WeatherValue = {
@@ -417,7 +417,7 @@ function getWindCondition(dataPoint: DarkSky.DataPoint, options: WeatherOptions 
   return { speed, bearing, gust };
 }
 
-function getPrecipitation(point: DarkSky.DataPointHourly | DarkSky.DataPointDaily, options: WeatherOptions = {}): Precipitation {
+function getPrecipitation(point: DataPointHourly | DataPointDaily, options: WeatherOptions = {}): Precipitation {
   const { precipType: type, precipIntensity, precipProbability, precipAccumulation } = point;
   const getUnits = getUnitsFor(options.units || DEFAULT_UNITS);
   const intensity = {

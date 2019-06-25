@@ -1,4 +1,4 @@
-import * as DarkSky from 'dark-sky';
+import DarkSky, { DataPoint, DataPointCurrently, DataPointDaily, DataPointHourly, Flags, Units } from 'dark-sky';
 
 import { Location, LocationResolver } from './location';
 import { DateTime, findTime, findTimeRange, RelativeDateTime, resolveDate } from './time';
@@ -6,18 +6,18 @@ import { WeatherForecastConditions } from './weather-conditions';
 
 export interface Forecast {
   location: Location;
-  flags: DarkSky.Flags;
+  flags: Flags;
   date: DateTime;
   summary: string;
-  currently?: DarkSky.DataPointCurrently;
-  hourly?: DarkSky.DataPointHourly[];
-  daily?: DarkSky.DataPointDaily[];
-  hour?: DarkSky.DataPointHourly;
-  day?: DarkSky.DataPointDaily;
+  currently?: DataPointCurrently;
+  hourly?: DataPointHourly[];
+  daily?: DataPointDaily[];
+  hour?: DataPointHourly;
+  day?: DataPointDaily;
 }
 
 export interface WeatherOptions {
-  units?: DarkSky.Units;
+  units?: Units;
   language?: string;
 }
 
@@ -133,7 +133,7 @@ export class WeatherForecast {
   }
 }
 
-function getSummaryForDateRange(range: DarkSky.DataPoint[]) {
+function getSummaryForDateRange(range: DataPoint[]) {
   const set = new Set<string>(range.map((x) => x.summary));
   const uniq = Array.from(set);
 
@@ -144,6 +144,4 @@ function getSummaryForDateRange(range: DarkSky.DataPoint[]) {
   } else {
     return uniq.slice(0, uniq.length - 1).join(', ') + ' and ' + uniq[uniq.length - 1];
   }
-
-  return Array.from(set).join(', and ');
 }
