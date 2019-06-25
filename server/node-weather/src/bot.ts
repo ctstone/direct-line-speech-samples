@@ -90,7 +90,7 @@ export class WeatherBot extends ActivityHandler {
         date);
     } else if (wind) {
       const { speed, gust, gustTime, bearing } = wind;
-      await context.__sendActivity(`The wind speed in % for %s is %s at %s, with gusts up to %s`,
+      await context.__sendActivity(`The wind speed in %s for %s is %s at %s, with gusts up to %s`,
         location.description,
         date,
         `${speed.value} ${speed.units}`,
