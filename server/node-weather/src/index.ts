@@ -15,16 +15,17 @@ import { BOT_SETTINGS, PORT } from './settings';
 const { appId, appPassword, endpoint, directLineKey } = BOT_SETTINGS;
 
 const adapter = new BotFrameworkAdapterMiddleware({ appId, appPassword })
-  .use(new I18NBotMiddleware(), new SpeechBotMiddleware())
-  ;
+  .use(
+    new I18NBotMiddleware({ directory: `${__dirname}/../data/locales` }),
+    new SpeechBotMiddleware());
 const webSocketAdapter = new BotFrameworkAdapterWebSocket({ appId, appPassword, endpoint });
 const recognizer = createWeatherRecognizer();
 const weatherForecast = createWeatherForecast();
 const bot = new WeatherBot(recognizer, weatherForecast);
 const server = express()
-  .use(express.static(`${__dirname}/../public`))
+  .use(express.static(`${__dirname}/../data/public`))
   .use('/api/tokens/generate', tokenGenerator(directLineKey))
   .post(endpoint, adapter.connect(bot))
-  .listen(PORT, () => console.log(`Listening on ${PORT}. Connect to the bot using the Bot Framework Emulator.`));
+  .listen(PORT, () => console.log(`Listening on http://localhost:${PORT}${endpoint}. Connect to the bot using the Bot Framework Emulator.`));
 
 webSocketAdapter.upgrade(server, bot);

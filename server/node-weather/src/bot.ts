@@ -22,7 +22,7 @@ export class WeatherBot extends ActivityHandler {
     const recognized = await this.recognizer.recognize(context);
     const intent = LuisRecognizer.topIntent(recognized) as WeatherIntent;
 
-    // console.dir(recognized.entities, { depth: 10 });
+    console.dir(recognized, { depth: 10 });
 
     switch (intent) {
       case WeatherIntent.getForecast:
