@@ -3,10 +3,12 @@ package com.microsoft.coginitiveservices.speech.samples.sdsdkstarterapp;
 
 import android.content.Intent;
 
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -31,6 +33,7 @@ import com.microsoft.cognitiveservices.speech.dialog.BotConnectorConfig;
 import com.microsoft.cognitiveservices.speech.KeywordRecognitionModel;
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig;
 
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
   static final int SELECT_RECOGNIZE_LANGUAGE_REQUEST = 0;
   static final int SELECT_TRANSLATE_LANGUAGE_REQUEST = 1;
+  static final byte[] AUDIO_BUFFER = getAudioBuffer();
+  static final byte[] WAV_HEADER = getWavHeader();
 
   private final ArrayList<String> content = new ArrayList<>();
   private boolean continuousListeningStarted = false;
@@ -245,12 +250,6 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  private void notifyReady() {
-    Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-    Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
-    ringtone.play();
-  }
-
   private void stopBotConnector() {
     if (botConnector != null) {
 
@@ -359,11 +358,75 @@ public class MainActivity extends AppCompatActivity {
     String year = date.substring(6,10);
     Log.i("System time" , date);
     if(Integer.valueOf(year) < 2018){
+      notifyTimeError();
       Log.i("System time" , "Please synchronize system time");
       setTextbox("System time is " + date + "\n" +"Please synchronize system time");
       return false;
     }
     return true;
+  }
+
+  private void notifyReady() {
+//    Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//    Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
+//    ringtone.play();
+
+    try {
+      AudioTrack player = new AudioTrack(
+        AudioManager.STREAM_MUSIC,
+        16000,
+        AudioFormat.CHANNEL_OUT_MONO,
+        AudioFormat.ENCODING_PCM_16BIT,
+        AUDIO_BUFFER.length,
+        AudioTrack.MODE_STREAM);
+
+      InputStream stream = getAssets().open("device-ready.wav");
+
+      player.play();
+      long bytesRead;
+      while ((bytesRead = stream.read(AUDIO_BUFFER)) > 0) {
+        player.write(AUDIO_BUFFER, 0, (int)bytesRead);
+      }
+    } catch (Exception ex) {
+      System.out.println(ex.getMessage());
+      displayException(ex);
+    }
+
+  }
+
+  private void notifyTimeError() {
+//    try {
+//      MediaPlayer mediaPlayer = new MediaPlayer();
+//      AssetFileDescriptor fd = getAssets().openFd("time-out-of-sync.wav");
+//      mediaPlayer.setDataSource(fd.getFileDescriptor());
+//      fd.close();
+//      mediaPlayer.prepare();
+//      mediaPlayer.start();
+//    } catch (Exception ex) {
+//      System.out.println(ex.getMessage());
+//      displayException(ex);
+//    }
+
+    try {
+      AudioTrack player = new AudioTrack(
+        AudioManager.STREAM_MUSIC,
+        16000,
+        AudioFormat.CHANNEL_OUT_MONO,
+        AudioFormat.ENCODING_PCM_16BIT,
+        AUDIO_BUFFER.length,
+        AudioTrack.MODE_STREAM);
+
+      InputStream stream = getAssets().open("time-out-of-sync.wav");
+
+      player.play();
+      long bytesRead;
+      while ((bytesRead = stream.read(AUDIO_BUFFER)) > 0) {
+        player.write(AUDIO_BUFFER, 0, (int)bytesRead);
+      }
+    } catch (Exception ex) {
+      System.out.println(ex.getMessage());
+      displayException(ex);
+    }
   }
 
   private interface OnTaskCompletedListener<T> {
@@ -409,12 +472,16 @@ public class MainActivity extends AppCompatActivity {
       .array();
   }
 
-  private static void playAudioStream(PullAudioOutputStream audio) {
-    int sampleRate = 16000;
+  private static byte[] getAudioBuffer() {
     int bufferSize = AudioTrack.getMinBufferSize(
-      sampleRate,
+      16000,
       AudioFormat.CHANNEL_OUT_MONO,
       AudioFormat.ENCODING_PCM_16BIT);
+    return new byte[bufferSize];
+  }
+
+  private static void playAudioStream(PullAudioOutputStream audio) {
+    final int sampleRate = 16000;
 
     Log.i("AUDIO", String.format("Playing audio"));
 
@@ -423,17 +490,15 @@ public class MainActivity extends AppCompatActivity {
       sampleRate,
       AudioFormat.CHANNEL_OUT_MONO,
       AudioFormat.ENCODING_PCM_16BIT,
-      bufferSize,
+      AUDIO_BUFFER.length,
       AudioTrack.MODE_STREAM);
-    player.play();
 
-    byte[] header = getWavHeader();
-    player.write(header, 0, header.length);
+    player.play();
+    player.write(WAV_HEADER, 0, WAV_HEADER.length);
 
     long bytesRead;
-    byte[] buffer = new byte[bufferSize];
-    while ((bytesRead = audio.read(buffer)) > 0) {
-      player.write(buffer, 0, (int)bytesRead);
+    while ((bytesRead = audio.read(AUDIO_BUFFER)) > 0) {
+      player.write(AUDIO_BUFFER, 0, (int)bytesRead);
     }
 
     player.stop();
