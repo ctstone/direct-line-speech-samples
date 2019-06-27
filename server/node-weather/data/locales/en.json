@@ -12,5 +12,7 @@
   "%s, the chance of %s in %s is %s": "%s, the chance of %s in %s is %s",
   "Expect up to %s of %s with up to %s": "Expect up to %s of %s with up to %s",
   "%s, the chance of %s in %s is %s with %s": "%s, the chance of %s in %s is %s with %s",
-  "The wind speed in %s for %s is %s at %s, with gusts up to %s": "The wind speed in %s for %s is %s at %s, with gusts up to %s"
+  "The wind speed in %s for %s is %s at %s, with gusts up to %s": "The wind speed in %s for %s is %s at %s, with gusts up to %s",
+  "%s, the chance of %s in %s is %s and %s": "%s, the chance of %s in %s is %s and %s",
+  "It doesn't look like there is any %s in %s %s": "It doesn't look like there is any %s in %s %s"
 }

@@ -1,0 +1,13 @@
+{
+  "%s miles per hour": "%s miles per hour",
+  "%s degrees": "%s degrees",
+  "The wind speed in %s for %s is %s at %s, with gusts up to %s": "The wind speed in %s for %s is %s at %s, with gusts up to %s",
+  "The wind speed in %s for %s is %s to the %s, with gusts up to %s": "The wind speed in %s for %s is %s to the %s, with gusts up to %s",
+  "%s %": "%s %",
+  "%s, the chance of %s in %s is %s and %s": "%s, the chance of %s in %s is %s and %s",
+  "%s will be %s in %s": "%s will be %s in %s",
+  "The %s in %s for %s is %s": "The %s in %s for %s is %s",
+  "%s degrees Fahrenheit": "%s degrees Fahrenheit",
+  "The average temperatue will be %s with a high of %s at %s": "The average temperatue will be %s with a high of %s at %s",
+  "Sorry, I did not find any weather day for %s in %s": "Sorry, I did not find any weather day for %s in %s"
+}

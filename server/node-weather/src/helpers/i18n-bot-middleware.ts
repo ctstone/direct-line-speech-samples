@@ -7,15 +7,18 @@ export interface SendActivityOptions {
   inputHint?: string;
 }
 
+export type I18NFunction = (text: string, ...args: any[]) => string;
+export type I18NNumberFunction = (singular: string, plural: string, count: number, ...args: any[]) => string;
+
 export interface TurnContextI18N extends TurnContext {
-  __(text: string, ...args: string[]): string;
-  __n(singular: string, plural: string, count: number, ...args: string[]): string;
+  __: I18NFunction;
+  __n: I18NNumberFunction;
 
-  __sendActivity(textOrActivity: string | Partial<Activity>, ...args: string[]): Promise<ResourceResponse>;
-  __sendActivity(textOrActivity: string | Partial<Activity>, options?: SendActivityOptions, ...args: string[]): Promise<ResourceResponse>;
+  __sendActivity(textOrActivity: string | Partial<Activity>, ...args: any[]): Promise<ResourceResponse>;
+  __sendActivity(textOrActivity: string | Partial<Activity>, options?: SendActivityOptions, ...args: any[]): Promise<ResourceResponse>;
 
-  __nsendActivity(singularText: string | Partial<Activity>, pluralText: string, count: number, ...args: string[]): Promise<ResourceResponse>;
-  __nsendActivity(singularText: string | Partial<Activity>, pluralText: string, count: number, options?: SendActivityOptions, ...args: string[]): Promise<ResourceResponse>;
+  __nsendActivity(singularText: string | Partial<Activity>, pluralText: string, count: number, ...args: any[]): Promise<ResourceResponse>;
+  __nsendActivity(singularText: string | Partial<Activity>, pluralText: string, count: number, options?: SendActivityOptions, ...args: any[]): Promise<ResourceResponse>;
 }
 
 export class I18NBotMiddleware implements Middleware {
@@ -28,7 +31,7 @@ export class I18NBotMiddleware implements Middleware {
   onTurn(baseContext: TurnContext, next: () => Promise<void>): Promise<void> {
     const context = baseContext as TurnContextI18N;
     const { __, __n, setLocale } = this.y18n;
-    const { activity: { locale} } = context;
+    const { activity: { locale } } = context;
 
     context.__ = (...args: any[]) => {
       setLocale(locale);
@@ -40,15 +43,15 @@ export class I18NBotMiddleware implements Middleware {
     };
     context.__sendActivity = (...args: any[]) => {
       let textOrActivity: string | Activity;
-      let options: SendActivityOptions = { };
-      let vals: string[];
+      let options: SendActivityOptions = {};
+      let vals: any[];
 
       // with options
       if (typeof args[1] === 'object') {
-        [ textOrActivity, options, ...vals ] = args;
-      // no options
+        [textOrActivity, options, ...vals] = args;
+        // no options
       } else {
-        [ textOrActivity, ...vals ] = args;
+        [textOrActivity, ...vals] = args;
       }
 
       const text = typeof textOrActivity === 'string' ? textOrActivity : textOrActivity.text;
@@ -66,17 +69,17 @@ export class I18NBotMiddleware implements Middleware {
     context.__nsendActivity = (...args: any[]) => {
       let textOrActivity: string | Activity;
       let plural: string;
-      let options: SendActivityOptions = { };
-      let vals: string[];
+      let options: SendActivityOptions = {};
+      let vals: any[];
       let count: number;
 
       // no options
       if (Array.isArray(args[3])) {
-        [ textOrActivity, plural, count, vals ] = args;
+        [textOrActivity, plural, count, vals] = args;
 
-      // with options
+        // with options
       } else {
-        [ textOrActivity, plural, count, options, vals ] = args;
+        [textOrActivity, plural, count, options, vals] = args;
       }
 
       const text = typeof textOrActivity === 'string' ? textOrActivity : textOrActivity.text;

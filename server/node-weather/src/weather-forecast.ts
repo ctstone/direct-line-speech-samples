@@ -59,7 +59,7 @@ export class WeatherForecast {
       console.log('DATE', relativeDate, date);
       const day = findTime(date.start, 'day', daily.data);
       if (day) {
-        const { summary } = day;
+        const summary = normalizeSummary(day.summary);
         return { location, day, flags, date, summary };
       }
     }
@@ -73,7 +73,7 @@ export class WeatherForecast {
       const date = resolveDate(relativeTime, location.timezone);
       const hour = findTime(date.start, 'hour', hourly.data);
       if (hour) {
-        const { summary } = hour;
+        const summary = normalizeSummary(hour.summary);
         return { location, hour, flags, date, summary };
       }
     }
@@ -113,7 +113,7 @@ export class WeatherForecast {
     if (forecast) {
       const { currently, flags } = forecast;
       const date: DateTime = { type: 'datetime', start: new Date() };
-      const { summary } = currently;
+      const summary = normalizeSummary(currently.summary);
       return { location, currently, flags, date, summary };
     }
   }
@@ -134,7 +134,7 @@ export class WeatherForecast {
 }
 
 function getSummaryForDateRange(range: DataPoint[]) {
-  const set = new Set<string>(range.map((x) => x.summary));
+  const set = new Set<string>(range.map((x) => normalizeSummary(x.summary)));
   const uniq = Array.from(set);
 
   if (uniq.length === 1) {
@@ -144,4 +144,8 @@ function getSummaryForDateRange(range: DataPoint[]) {
   } else {
     return uniq.slice(0, uniq.length - 1).join(', ') + ' and ' + uniq[uniq.length - 1];
   }
+}
+
+function normalizeSummary(summary: string) {
+  return summary.toLowerCase().replace(/\./, '');
 }
