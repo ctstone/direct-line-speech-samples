@@ -7,6 +7,9 @@ import android.content.res.AssetManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -120,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -225,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
         setOnTaskCompletedListener(start, (result2) -> {
           Log.i(logTag, String.format("Listening"));
           setStatusTextReady();
+          notifyReady();
           continuousListeningStarted = true;
           MainActivity.this.runOnUiThread(() -> {
             buttonText = recognizeKwsButton.getText().toString();
@@ -237,6 +243,12 @@ public class MainActivity extends AppCompatActivity {
       System.out.println(ex.getMessage());
       displayException(ex);
     }
+  }
+
+  private void notifyReady() {
+    Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
+    ringtone.play();
   }
 
   private void stopBotConnector() {
