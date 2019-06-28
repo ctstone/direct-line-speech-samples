@@ -3,16 +3,13 @@ package com.microsoft.coginitiveservices.speech.samples.sdsdkstarterapp;
 
 import android.content.Intent;
 
-import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
-import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
@@ -63,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
   private static final String logTag = "APP";
   private static final String delimiter = "\n";
 
+  static final int CHECK_TIME_INTERVAL = 1000;
+  static final int CHECK_TIME_MAX_TRIES = 30;
   static final int SELECT_RECOGNIZE_LANGUAGE_REQUEST = 0;
   static final int SELECT_TRANSLATE_LANGUAGE_REQUEST = 1;
   static final byte[] AUDIO_BUFFER = getAudioBuffer();
@@ -70,7 +69,18 @@ public class MainActivity extends AppCompatActivity {
 
   private final ArrayList<String> content = new ArrayList<>();
   private boolean continuousListeningStarted = false;
+  private int checkSystemTimeTries = 0;
   private String buttonText = "";
+  private Handler checkSystemTimeHandler = new Handler();
+  private Runnable checkSystemTimeTimer = () -> {
+    if (checkSystemTime()) {
+      onSystemTimeValid();
+    } else if (checkSystemTimeTries >= CHECK_TIME_MAX_TRIES) {
+      onSystemTimeInvalid();
+    } else {
+      onSystemTimeRetry();
+    }
+  };
 
   private TextView recognizedTextView;
   private Button recognizeKwsButton;
@@ -79,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
   private SpeechBotConnector botConnector;
   private TextView statusTextView;
 
-  private AudioConfig getAudioConfig() {
+  private static AudioConfig getAudioConfig() {
     return AudioConfig.fromDefaultMicrophoneInput();
   }
 
@@ -118,18 +128,6 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  public void onClickListen(View view) {
-    disableButtons();
-
-    if (continuousListeningStarted) {
-      stopBotConnector();
-    } else {
-      startBotConnector();
-    }
-  }
-
-
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -146,15 +144,43 @@ public class MainActivity extends AppCompatActivity {
     assets = this.getAssets();
 
     disableButtons();
+
+    setStatusText("Checking network status...");
+    checkSystemTimeHandler.postDelayed(checkSystemTimeTimer, 0);
+  }
+
+  public void onClickListen(View view) {
+    disableButtons();
+
+    if (continuousListeningStarted) {
+      stopBotConnector();
+    } else {
+      startBotConnector();
+    }
+  }
+
+  private void onSystemTimeValid() {
+    Log.i(logTag, "System time is valid, Starting connection");
+    checkSystemTimeHandler.removeCallbacks(checkSystemTimeTimer);
     startBotConnector();
+  }
+
+  private void onSystemTimeInvalid() {
+    Log.i(logTag, "System time is invalid. Abandon all hope");
+    checkSystemTimeHandler.removeCallbacks(checkSystemTimeTimer);
+    notifyTimeError();
+  }
+
+  private void onSystemTimeRetry() {
+    ToneGenerator beep = new ToneGenerator(AudioManager.STREAM_MUSIC, 50);
+    beep.startTone(ToneGenerator.TONE_PROP_PROMPT, 100);
+    checkSystemTimeTries += 1;
+    Log.i(logTag, String.format("System time is invalid [%s / %s]", checkSystemTimeTries, CHECK_TIME_MAX_TRIES));
+    checkSystemTimeHandler.postDelayed(checkSystemTimeTimer, CHECK_TIME_INTERVAL);
   }
 
 
   private void startBotConnector() {
-
-    if(!checkSystemTime()) {
-      return;
-    }
 
     clearRecognizedText();
     clearStatusText();
@@ -355,60 +381,24 @@ public class MainActivity extends AppCompatActivity {
     Calendar calendar = Calendar.getInstance();
     SimpleDateFormat simpledateformat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     String date = simpledateformat.format(calendar.getTime());
-    String year = date.substring(6,10);
+    String year = date.substring(6, 10);
     Log.i("System time" , date);
-    if(Integer.valueOf(year) < 2018){
-      notifyTimeError();
-      Log.i("System time" , "Please synchronize system time");
-      setTextbox("System time is " + date + "\n" +"Please synchronize system time");
-      return false;
-    }
-    return true;
+    return Integer.valueOf(year) > 2018;
   }
 
   private void notifyReady() {
-//    Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//    Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), soundUri);
-//    ringtone.play();
-
-    try {
-      AudioTrack player = new AudioTrack(
-        AudioManager.STREAM_MUSIC,
-        16000,
-        AudioFormat.CHANNEL_OUT_MONO,
-        AudioFormat.ENCODING_PCM_16BIT,
-        AUDIO_BUFFER.length,
-        AudioTrack.MODE_STREAM);
-
-      InputStream stream = getAssets().open("device-ready.wav");
-
-      player.play();
-      long bytesRead;
-      while ((bytesRead = stream.read(AUDIO_BUFFER)) > 0) {
-        player.write(AUDIO_BUFFER, 0, (int)bytesRead);
-      }
-    } catch (Exception ex) {
-      System.out.println(ex.getMessage());
-      displayException(ex);
-    }
-
+    playWavFile("device-ready.wav");
   }
 
   private void notifyTimeError() {
-//    try {
-//      MediaPlayer mediaPlayer = new MediaPlayer();
-//      AssetFileDescriptor fd = getAssets().openFd("time-out-of-sync.wav");
-//      mediaPlayer.setDataSource(fd.getFileDescriptor());
-//      fd.close();
-//      mediaPlayer.prepare();
-//      mediaPlayer.start();
-//    } catch (Exception ex) {
-//      System.out.println(ex.getMessage());
-//      displayException(ex);
-//    }
+    Log.i("System time" , "Please synchronize system time");
+    setStatusText("System time is out of sync. Please ensure that you are connected to Wi-Fi");
+    playWavFile("time-out-of-sync.wav");
+  }
 
+  private void playWavFile(String filename) {
     try {
-      AudioTrack player = new AudioTrack(
+      AudioTrack player = new AudioTrack( // TODO: can AudioTrack be reused?
         AudioManager.STREAM_MUSIC,
         16000,
         AudioFormat.CHANNEL_OUT_MONO,
@@ -416,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
         AUDIO_BUFFER.length,
         AudioTrack.MODE_STREAM);
 
-      InputStream stream = getAssets().open("time-out-of-sync.wav");
+      InputStream stream = getAssets().open(filename);
 
       player.play();
       long bytesRead;
