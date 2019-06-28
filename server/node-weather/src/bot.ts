@@ -24,7 +24,10 @@ export class WeatherBot extends ActivityHandler {
     const recognized = await this.recognizer.recognize(context);
     const intent = LuisRecognizer.topIntent(recognized) as WeatherIntent;
 
-    console.dir(recognized, { depth: 10 });
+    // make sure middleware is wired up
+    if (!context.__) {
+      return await context.sendActivity('Oops, this bot is not running correctly');
+    }
 
     switch (intent) {
       case WeatherIntent.getForecast:

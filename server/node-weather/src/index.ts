@@ -18,7 +18,7 @@ const adapter = new BotFrameworkAdapterMiddleware({ appId, appPassword })
   .use(
     new I18NBotMiddleware({ directory: `${__dirname}/../data/locales` }),
     new SpeechBotMiddleware());
-const webSocketAdapter = new BotFrameworkAdapterWebSocket({ appId, appPassword, endpoint });
+
 const recognizer = createWeatherRecognizer();
 const weatherForecast = createWeatherForecast();
 const bot = new WeatherBot(recognizer, weatherForecast);
@@ -28,4 +28,11 @@ const server = express()
   .post(endpoint, adapter.connect(bot))
   .listen(PORT, () => console.log(`Listening on http://localhost:${PORT}${endpoint}. Connect to the bot using the Bot Framework Emulator.`));
 
-webSocketAdapter.upgrade(server, bot);
+new BotFrameworkAdapterWebSocket({ appId, appPassword, endpoint })
+  .use(
+    new I18NBotMiddleware({ directory: `${__dirname}/../data/locales` }),
+    new SpeechBotMiddleware())
+  .onTurnError(async (context) => {
+    await context.sendActivity('Opps, an error!');
+  })
+  .upgrade(server, bot);
