@@ -15,22 +15,22 @@
 - what is the low temperature
 - what is the low today
 - what is the temperature
-- how much will it rain in {Weather.Location=Boston} tomorrow?
-- how windy is it in {Weather.Location=Boston}?
+- how much will it rain in {Weather.Location=Boston} tomorrow
+- how windy is it in {Weather.Location=Boston}
 - do i need an umbrella today
 - is it going to snow today
-- is it raining?
+- is it raining
 - is it snowing
-- is there rain?
+- is there rain
 - should i wear a raincoat today
 - will it be cold today
 - will it be cold tomorrow
 - will it be hot today
 - will it be hot tomorrow
 - will it rain today
-- will it rain tomorrow?
-- will it sleet today?
-- will it snow this week?
+- will it rain tomorrow
+- will it sleet today
+- will it snow this week
 - will it snow today
 - will it be raining in {Weather.Location=ranchi}
 - will it rain this weekend
@@ -44,6 +44,16 @@
 - what is the weather in {Weather.Location=redmond}
 - what is the weather today at 10 am in {Weather.Location=durham}
 - what will the weather be tomorrow in {Weather.Location=accord new york}
+- what is the weather today
+- what is the weather tomorrow
+- what is the weather in {Weather.Location=Boston} today
+- what are the conditions
+- what are the current conditions
+- what is the forecast
+- what is the forecast for {Weather.Location=Boston}
+- what is the forecast today
+- what's the weather
+- what's the weather in {Weather.Location=Boston}
 
 $Days:phraseList
 - monday,tuesday,wednesday,thursday,friday,saturday,sunday,next day,the day after tomorrow,today,tommorow,tonight,weekend,this morning,this afternoon,this week,tomorrow morning,now
