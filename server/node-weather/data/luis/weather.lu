@@ -34,6 +34,10 @@
 - will it snow today
 - will it be raining in {Weather.Location=ranchi}
 - will it rain this weekend
+- is it windy
+- what's the wind speed
+- what's the high today
+- what's the temperature
 
 ## Weather.GetForecast
 - get the forcast for me
