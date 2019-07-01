@@ -22,6 +22,9 @@ export class WeatherBot extends ActivityHandler {
 
   private message: BotHandler = async (context: TurnContextI18N) => {
     const recognized = await this.recognizer.recognize(context);
+    if (context.activity && context.activity.text) {
+      context.activity.text = context.activity.text.replace(/^hey jio /i, '');
+    }
     const intent = LuisRecognizer.topIntent(recognized) as WeatherIntent;
 
     // make sure middleware is wired up
