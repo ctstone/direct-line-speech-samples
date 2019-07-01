@@ -1,11 +1,18 @@
-import { ActivityHandler, Middleware, MiddlewareHandler, MiddlewareSet, TurnContext } from 'botbuilder';
-import { TurnErrorCallback } from './bot-framework-adapter-ws';
+import { ActivityHandler, Middleware, MiddlewareHandler, MiddlewareSet } from 'botbuilder';
 
 export class MiddlewareActivityHandler extends ActivityHandler {
+
+  /**
+   * Currently there is no support for middleware handling in a streaming-extension bot.
+   * Use this utility to wrap middleware and onTurnError around the bot implementation
+   * @param bot The bot logic to run
+   * @param middleware Any middleware that should be registered
+   * @param turnErrorCallback Error handler
+   */
   constructor(
     private bot: ActivityHandler,
     private middleware?: Array<Middleware | MiddlewareHandler>,
-    private turnErrorCallback?: TurnErrorCallback) {
+    private turnErrorCallback?: any) {
 
     super();
 

@@ -8,12 +8,15 @@ const CRLF = '\r\n';
 const EMPTY = '';
 const REASON = 'Connection Not Upgraded';
 
-/**
- * Restify+Watershed compatible response object
- */
 export class UpgradedResponse extends ServerResponse {
   private body: string;
 
+  /**
+   * Restify+Watershed compatible response object
+   * @param req http request
+   * @param socket open socket
+   * @param head buffer
+   */
   constructor(req: IncomingMessage, public socket: Socket, public head: Buffer) {
     super(req);
   }

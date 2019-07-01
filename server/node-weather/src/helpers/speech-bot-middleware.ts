@@ -5,24 +5,36 @@ export type SsmlGeneratorCallback = (locale: string) => PromiseLike<SpeechHandle
 export type SpeechHandler = (text: string) => string;
 
 export interface VoiceDefinition {
+  /** Language code (e.g. en-US) */
   language: string;
+
+  /** Voice name */
   voiceId: string;
 }
 
 export interface SpeechOptions {
+  /** The default voice when a locale-specific voice is not available */
   defaultVoice?: VoiceDefinition;
+
+  /** Callback function to supply a specific voice for a given locale */
   voiceForLocale?: VoiceCallback;
+
+  /** Callback function to supply custom SSML for a given locale */
   ssmlForLocale?: SsmlGeneratorCallback;
 }
 
-export const DEFAULT_VOICE: VoiceDefinition = {
+const DEFAULT_VOICE: VoiceDefinition = {
   language: 'en-US',
   voiceId: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)',
 };
 
 export class SpeechBotMiddleware implements Middleware {
+  /**
+   * Middleware to apply SSML (speech) formatting to any text delivered by the bot.
+   * @param options Speech voice options (default voice is JessaNeural for en-US locale)
+   */
   constructor(private options?: SpeechOptions) {
-    this.options = options || { };
+    this.options = options || {};
     this.options.defaultVoice = this.options.defaultVoice || DEFAULT_VOICE;
   }
 
