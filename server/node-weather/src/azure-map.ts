@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { AzureMapError } from './azure-map-error';
 
 const API_VERSION = '1.0';
 const ENDPOINT = 'https://atlas.microsoft.com';
@@ -13,6 +14,7 @@ enum MapParam {
 }
 
 export interface AddressSearchOptions {
+  typeahead: boolean;
   limit?: number;
   ofs?: number;
   countrySet?: string[];
@@ -116,12 +118,14 @@ export interface Position {
   lon: number;
 }
 
-export enum TimezoneOptions {
+export enum TimezoneOption {
   all = 'all',
   none = 'none',
   transitions = 'transitions',
   zoneInfo = 'zoneInfo',
 }
+
+export type TimezoneOptions = 'all' | 'none' | 'transitions' | 'zoneInfo';
 
 export interface TimezoneQuery {
   options?: TimezoneOptions;
@@ -180,6 +184,10 @@ export interface TimeTransition {
   UtcStart: string;
 }
 
+interface ErrorResponse {
+  error: { code: string, message: string };
+}
+
 export class AzureMap {
 
   private readonly api: AxiosInstance;
@@ -195,7 +203,7 @@ export class AzureMap {
     };
   }
 
-  async searchAddress(query: string, options?: AddressSearchOptions): Promise<AddressSearchResponse> {
+  async searchAddress(query: string, options?: AddressSearchOptions) {
     const optionalParams: { [key: string]: string | number | boolean } = {};
     (Object.keys(options || {}) as Array<keyof AddressSearchOptions>)
       .forEach((k) => {
@@ -203,30 +211,30 @@ export class AzureMap {
         optionalParams[k] = Array.isArray(value) ? value.join(',') : value;
       });
     const params = this.assignParams(optionalParams, { query });
-    const resp = await this.api.get('search/address/json', { params });
-    return resp.data;
+    return await tryRequest(() => this.api.get<AddressSearchResponse>('search/address/json', { params }));
   }
 
-  async searchAddressStructured(options: AddressSearchStructured): Promise<AddressSearchResponse> {
-    const params = this.assignParams(options);
-    const resp = await this.api.get('search/address/structured/json', { params });
-    return resp.data;
-  }
-
-  async searchAddressReverse(options: AddressSearchReverse): Promise<AddressSearchReverseResponse> {
-    const params = this.assignParams(options);
-    const resp = await this.api.get('search/address/reverse/json', { params });
-    return resp.data;
-  }
-
-  async getTimezoneByCoordinates(coordinates: [number, number], options?: TimezoneQuery, language?: string): Promise<TimezoneResponse> {
+  async getTimezoneByCoordinates(coordinates: [number, number], options?: TimezoneQuery, language?: string) {
     const params = this.assignParams({ query: coordinates.join(',') }, options);
-    const headers = language ? { 'Accept-Language': language } : null;
-    const resp = await this.api.get('timezone/byCoordinates/json', { params, headers });
-    return resp.data;
+    const headers = language ? { 'accept-language': language } : null;
+    return tryRequest(() => this.api.get<TimezoneResponse>('timezone/byCoordinates/json', { params, headers }));
   }
 
   private assignParams(...params: any[]) {
     return Object.assign({}, ...params, this.baseParams);
+  }
+}
+
+async function tryRequest<T = any>(fn: () => Promise<AxiosResponse<T>>) {
+  try {
+    return (await fn()).data;
+  } catch (err) {
+    if (err && err.response) {
+      const { data, status } = err.response as AxiosResponse<ErrorResponse>;
+      const message = data && data.error ? data.error.message : 'Unknown Azure Maps Error';
+      throw new AzureMapError(message, status);
+    } else {
+      throw err;
+    }
   }
 }

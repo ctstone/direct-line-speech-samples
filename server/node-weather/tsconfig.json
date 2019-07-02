@@ -7,11 +7,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "declaration": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "typeRoots" : ["./node_modules/@types", "./typings"]
   },
   "exclude": [
-    "lib/**",
-    "dist/**",
-    "../node-lib/**"
+    "lib",
+    "dist",
+    "test"
   ]
 }
