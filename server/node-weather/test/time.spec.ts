@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import mockdate from 'mockdate';
 
-import { createDate, findTime, findTimeRange, getTimestamp, parseTime, resolveDate, DateTimeType } from '../src/time';
+import { createDate, findTime, findTimeRange, getTimestamp, parseTime, resolveDate } from '../src/time';
 
 const CANDIDATES = [
   '2000-01-02',
