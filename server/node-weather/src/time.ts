@@ -36,22 +36,25 @@ export interface DateTime {
  * @param candidates sorted list of candidates to compare (timezone adjusted)
  */
 export function findTime<T extends Time>(date: Date, granularity: moment.unitOfTime.StartOf, candidates: T[]): T {
-  const timestamp = getTimestamp(date);
-  const time = candidates.find((x, i, array) => timestamp >= x.time && timestamp >= x.time && (!array[i + 1] || timestamp < array[i + 1].time));
-  return time && moment(date).isSame(time.time * 1000, granularity) ? time : null;
+  const target = getTimestamp(moment.utc(date).startOf(granularity).toDate());
+  const time = candidates.find(({ time }, i, array) => {
+    const next = array[i + 1];
+    return target >= time && target >= time && (!next || target < next.time);
+  });
+  return time && moment.utc(date).isSame(time.time * 1000, granularity) ? time : null;
 }
 
 /**
  * Find the latest candidate with a date that is less than a target date.
  * @param startDate start date to include (inclusive)
- * @param endDate end date to include (exclusive)find
+ * @param endDate end date to include (exclusive)
  * @param candidates sorted list of candidates to compare
  * @param timezone IANA timezone label associated with the candidate times
  */
 export function findTimeRange<T extends Time>(startDate: Date, endDate: Date, candidates: T[]): T[] {
   const start = getTimestamp(startDate);
   const end = getTimestamp(endDate);
-  return candidates.filter((x, i, array) => x.time >= start && x.time < end);
+  return candidates.filter((x) => x.time >= start && x.time < end);
 }
 
 export function createDate(seconds: number) {
