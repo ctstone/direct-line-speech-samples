@@ -51,12 +51,10 @@ export class WeatherForecast {
 
   async forDate(place: string, relativeDate: RelativeDateTime, options?: WeatherOptions): Promise<Forecast> {
     const location = await this.loc.resolve(place);
-    console.log('LOCATION', location);
     const forecast = await this.getWeather(location, options);
     if (forecast) {
       const { daily, flags } = forecast;
       const date = resolveDate(relativeDate, location.timezone);
-      console.log('DATE', relativeDate, date);
       const day = findTime(date.start, 'day', daily.data);
       if (day) {
         const summary = normalizeSummary(day.summary);
@@ -107,16 +105,16 @@ export class WeatherForecast {
     }
   }
 
-  async forCurrent(place: string, options?: WeatherOptions): Promise<Forecast> {
-    const location = await this.loc.resolve(place);
-    const forecast = await this.getWeather(location, options);
-    if (forecast) {
-      const { currently, flags } = forecast;
-      const date: DateTime = { type: 'datetime', start: new Date() };
-      const summary = normalizeSummary(currently.summary);
-      return { location, currently, flags, date, summary };
-    }
-  }
+  // async forCurrent(place: string, options?: WeatherOptions): Promise<Forecast> {
+  //   const location = await this.loc.resolve(place);
+  //   const forecast = await this.getWeather(location, options);
+  //   if (forecast) {
+  //     const { currently, flags } = forecast;
+  //     const date: DateTime = { type: 'datetime', start: new Date() };
+  //     const summary = normalizeSummary(currently.summary);
+  //     return { location, currently, flags, date, summary };
+  //   }
+  // }
 
   private async getWeather(location: Location, options: WeatherOptions = {}) {
     if (location) {

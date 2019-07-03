@@ -30,18 +30,17 @@ export interface DateTime {
 }
 
 /**
- * Find the latest candidate with a date that is less than a target date.
+ * Find the latest candidate with a date that is less than or equal to a target date.
  * @param date the time to look for
  * @param granularity date granularity (same day/hour/etc)
  * @param candidates sorted list of candidates to compare (timezone adjusted)
  */
 export function findTime<T extends Time>(date: Date, granularity: moment.unitOfTime.StartOf, candidates: T[]): T {
-  const target = getTimestamp(moment.utc(date).startOf(granularity).toDate());
-  const time = candidates.find(({ time }, i, array) => {
+  const target = moment.utc(date).unix();
+  return candidates.find(({ time }, i, array) => {
     const next = array[i + 1];
-    return target >= time && target >= time && (!next || target < next.time);
+    return target >= time && ((!next && target <= time) || (next && target < next.time));
   });
-  return time && moment.utc(date).isSame(time.time * 1000, granularity) ? time : null;
 }
 
 /**
@@ -58,11 +57,11 @@ export function findTimeRange<T extends Time>(startDate: Date, endDate: Date, ca
 }
 
 export function createDate(seconds: number) {
-  return new Date(seconds * 1000);
+  return moment.unix(seconds).utc().toDate();
 }
 
 export function getTimestamp(date: Date) {
-  return date.getTime() / 1000;
+  return moment.utc(date).unix();
 }
 
 /** Return a date object representing the given time as of today */

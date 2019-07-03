@@ -11,7 +11,7 @@
     "watch": "tsc-watch --onSuccess \"npm run start-dev\"",
     "publish-luis": "node -r dotenv/config scripts/publish-luis",
     "refresh-luis": "node -r dotenv/config scripts/refresh-luis",
-    "test": "mocha -r ts-node/register ./test/*.ts",
+    "test": "mocha -r ts-node/register ./test/*.spec.ts",
     "cov": "nyc npm test"
   },
   "keywords": [],

@@ -8,7 +8,7 @@ const CANDIDATES = [
   '2000-01-03',
   '2000-01-04',
   '2000-01-05',
-].map((x) => ({ time: getTimestamp(new Date(x))}));
+].map((x) => ({ time: getTimestamp(new Date(x)) }));
 
 describe('Time', () => {
 
@@ -48,16 +48,28 @@ describe('Time', () => {
       expect(res.time).to.equal(getTimestamp(new Date('2000-01-03')));
     });
 
+    it('finds nearest day edge low', () => {
+      const d = new Date('2000-01-02');
+      const res = findTime(d, 'day', CANDIDATES);
+      expect(res.time).to.equal(getTimestamp(new Date('2000-01-02')));
+    });
+
+    it('finds nearest day edge high', () => {
+      const d = new Date('2000-01-05');
+      const res = findTime(d, 'day', CANDIDATES);
+      expect(res.time).to.equal(getTimestamp(new Date('2000-01-05')));
+    });
+
     it('ignores out of bounds high', () => {
       const d = new Date('2000-01-06');
       const res = findTime(d, 'day', CANDIDATES);
-      expect(res).to.be.null;
+      expect(res).to.be.undefined;
     });
 
     it('ignores out of bounds low', () => {
       const d = new Date('2000-01-01');
       const res = findTime(d, 'day', CANDIDATES);
-      expect(res).to.be.null;
+      expect(res).to.be.undefined;
     });
   });
 

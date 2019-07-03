@@ -6,25 +6,25 @@ declare module 'dark-sky' {
 
   namespace DarkSky {
     export interface Options {
-      latitude: number;
-      longitude: number;
-      time: string;
-      language: string;
-      exclude: Block[] | string[];
-      extendHourly: boolean;
-      units: Units | string;
+      latitude?: number;
+      longitude?: number;
+      time?: string;
+      language?: string;
+      exclude?: Block[] | string[];
+      extendHourly?: boolean;
+      units?: Units | string;
     }
 
     export interface Forecast {
-      latitude: number;
-      longitude: number;
-      timezone: string;
-      currently: DataPointCurrently;
-      minutely: DataBlock;
-      hourly: DataBlock<DataPointHourly>;
-      daily: DataBlock<DataPointDaily>;
-      alerts: Alert[];
-      flags: Flags
+      latitude?: number;
+      longitude?: number;
+      timezone?: string;
+      currently?: DataPointCurrently;
+      minutely?: DataBlock;
+      hourly?: DataBlock<DataPointHourly>;
+      daily?: DataBlock<DataPointDaily>;
+      alerts?: Alert[];
+      flags?: Flags
     }
 
     export interface Alert {
@@ -38,10 +38,10 @@ declare module 'dark-sky' {
     }
 
     export interface Flags {
-      ['darksky-unavailable']: string;
-      ['nearest-station']: number;
-      sources: string[];
-      units: Units;
+      ['darksky-unavailable']?: string;
+      ['nearest-station']?: number;
+      sources?: string[];
+      units?: Units;
     }
 
     export interface DataBlock<T extends DataPoint = DataPoint> {
@@ -51,62 +51,63 @@ declare module 'dark-sky' {
     }
 
     export interface DataPoint {
-      cloudCover: number;
-      dewPoint: number;
-      humidity: number;
-      icon: Icon;
-      ozone: number;
-      precipIntensity: number;
-      precipIntensityError: number;
-      precipProbability: number;
-      precipType: PrecipType;
-      pressure: number;
-      summary: string;
       time: number;
-      uvIndex: number;
-      visibility: number;
-      windBearing: number;
-      windGust: number;
-      windSpeed: number;
+      cloudCover?: number;
+      dewPoint?: number;
+      humidity?: number;
+      icon?: Icon;
+      ozone?: number;
+      precipIntensity?: number;
+      precipIntensityError?: number;
+      precipProbability?: number;
+      precipType?: PrecipType;
+      pressure?: number;
+      summary?: string;
+      uvIndex?: number;
+      visibility?: number;
+      windBearing?: number;
+      windGust?: number;
+      windSpeed?: number;
     }
 
     export interface DataPointCurrently extends DataPoint {
-      nearestStormBearing: number;
-      nearestStormDistance: number;
-      temperature: number;
+      nearestStormBearing?: number;
+      nearestStormDistance?: number;
+      temperature?: number;
+      apparentTemperature?: number;
     }
 
     export interface DataPointDaily extends DataPoint {
-      apparentTemperatureHigh: number;
-      apparentTemperatureHighTime: number;
-      apparentTemperatureLow: number;
-      apparentTemperatureLowTime: number;
-      apparentTemperatureMax: number;
-      apparentTemperatureMaxTime: number;
-      apparentTemperatureMin: number;
-      apparentTemperatureMinTime: number;
-      moonPhase: number;
-      precipIntensityMax: number;
-      precipIntensityMaxTime: number;
-      sunriseTime: number;
-      sunsetTime: number;
-      temperatureHigh: number;
-      temperatureHighTime: number;
-      temperatureLow: number;
-      temperatureLowTime: number;
-      temperatureMax: number;
-      temperatureMaxTime: number;
-      temperatureMin: number;
-      temperatureMinTime: number;
-      uvIndexTime: number;
-      windGustTime: number;
-      precipAccumulation: number;
+      apparentTemperatureHigh?: number;
+      apparentTemperatureHighTime?: number;
+      apparentTemperatureLow?: number;
+      apparentTemperatureLowTime?: number;
+      apparentTemperatureMax?: number;
+      apparentTemperatureMaxTime?: number;
+      apparentTemperatureMin?: number;
+      apparentTemperatureMinTime?: number;
+      moonPhase?: number;
+      precipIntensityMax?: number;
+      precipIntensityMaxTime?: number;
+      sunriseTime?: number;
+      sunsetTime?: number;
+      temperatureHigh?: number;
+      temperatureHighTime?: number;
+      temperatureLow?: number;
+      temperatureLowTime?: number;
+      temperatureMax?: number;
+      temperatureMaxTime?: number;
+      temperatureMin?: number;
+      temperatureMinTime?: number;
+      uvIndexTime?: number;
+      windGustTime?: number;
+      precipAccumulation?: number;
     }
 
     export interface DataPointHourly extends DataPoint {
-      temperature: number;
-      apparentTemperature: number;
-      precipAccumulation: number;
+      temperature?: number;
+      apparentTemperature?: number;
+      precipAccumulation?: number;
     }
 
     export interface Coordinates {

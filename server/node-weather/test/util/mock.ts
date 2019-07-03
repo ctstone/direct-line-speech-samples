@@ -2,22 +2,35 @@ interface Indexable {
   [key: string]: any;
 }
 
+export const MOCK_SELF = {};
+
 export class Mock<T> {
-  private respQueueMap = new Map<keyof T, any[]>();
+  private respQueues = new Map<keyof T, any[]>();
+  private argsHistories = new Map<keyof T, any[][]>();
 
   on<R>(fn: keyof T, resp: R) {
-    if (!this.respQueueMap.has(fn)) {
+    const { respQueues, argsHistories } = this;
+    let respQueue: R[];
+    if (respQueues.has(fn)) {
+      respQueue = respQueues.get(fn);
+    } else {
+      const argsHistory: any[] = [];
       const indexable = this as any as Indexable;
-      this.respQueueMap.set(fn, []);
-      indexable[fn.toString()] = () => {
+      respQueue = [];
+      respQueues.set(fn, respQueue);
+      argsHistories.set(fn, argsHistory);
+      indexable[fn.toString()] = (...args: any[]) => {
+        argsHistory.push(args);
         if (resp instanceof Error) {
           throw resp;
+        } else if (resp === MOCK_SELF) {
+          return this;
         } else {
-          return this.respQueueMap.get(fn).shift();
+          return respQueue.shift();
         }
       };
     }
-    this.respQueueMap.get(fn).push(resp);
+    respQueue.push(resp);
     return this;
   }
 
@@ -38,5 +51,9 @@ export class Mock<T> {
 
   mock(): T {
     return this as any as T;
+  }
+
+  argsPassed<K extends keyof T>(fn: K) {
+    return this.argsHistories.get(fn);
   }
 }
