@@ -1,9 +1,9 @@
 import DarkSky from 'dark-sky';
 import { Mock, MOCK_SELF } from './mock';
-import { mockForecast, MockForecastOptions } from './mock-forecast';
+import { FORECAST } from './mock-forecast';
 
-export function mockDarkSky(date: string, options?: MockForecastOptions) {
-  const forecast = mockForecast(date, options);
+export function mockDarkSky() {
+  const forecast = FORECAST;
   const darkSky = new Mock<DarkSky>()
     .on('latitude', MOCK_SELF)
     .on('longitude', MOCK_SELF)
