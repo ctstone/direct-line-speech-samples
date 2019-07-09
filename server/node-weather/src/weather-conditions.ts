@@ -384,6 +384,11 @@ export class WeatherForecastConditions {
   }
 }
 
+// function round(val: number, p?: number): number {
+//   const n = Math.pow(10, p || 0);
+//   return Math.round(val * n) / n;
+// }
+
 function maxBy<T>(items: T[], fn: (x: T) => number) {
   return items.reduce((m, x) => fn(x) > fn(m) ? x : m);
 }

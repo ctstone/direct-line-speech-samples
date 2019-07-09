@@ -14,6 +14,8 @@ export function getUnits(feature: DarkSkyFeature, unitsType: DarkSky.Units) {
     case 'temperatureLow':
     case 'temperatureHigh':
     case 'apparentTemperature':
+    case 'apparentTemperatureHigh':
+    case 'apparentTemperatureLow':
     case 'dewPoint':
       return getTemperatureUnits(unitsType);
 
