@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import DarkSky, { Forecast } from 'dark-sky';
+import DarkSky from 'dark-sky';
 import mockdate from 'mockdate';
 import moment from 'moment';
 import 'moment-timezone';
@@ -20,7 +20,6 @@ describe('Weather Forecast', () => {
 
   let locationResolverBoston: LocationResolver;
   let locationResolverEmpty: LocationResolver;
-  let forecast: Forecast;
   let darkSky: DarkSky;
 
   beforeEach(() => {
@@ -31,20 +30,18 @@ describe('Weather Forecast', () => {
     locationResolverEmpty = new Mock<LocationResolver>()
       .onPromised('resolve', null)
       .mock();
-    const ds = mockDarkSky();
-    forecast = ds.forecast;
-    darkSky = ds.darkSky;
+    darkSky = mockDarkSky(FORECAST);
   });
 
   describe('For Date', () => {
     const type = 'date';
     const value = DEFAULT_DATE;
 
-    it('returns forecast for day', async () => {
+    it('returns forecast', async () => {
       const weather = new WeatherForecast(locationResolverBoston, darkSky);
       const resp = await weather.lookup('Boston', { type, value });
       const time = moment.tz(value, LOCATION1.timezone).unix();
-      const day = forecast.daily.data.find((x) => x.time === time);
+      const day = FORECAST.daily.data.find((x) => x.time === time);
       expect(resp.location.coordinates).to.equal(LOCATION1.coordinates);
       expect(resp.day.time).to.equal(time);
       expect(resp.day.temperatureHigh).to.equal(day.temperatureHigh);
@@ -75,7 +72,7 @@ describe('Weather Forecast', () => {
         .tz(LOCATION1.timezone)
         .startOf('hour')
         .unix();
-      const hour = forecast.hourly.data.find((x) => x.time === time);
+      const hour = FORECAST.hourly.data.find((x) => x.time === time);
       expect(resp.location.coordinates).to.equal(LOCATION1.coordinates);
       expect(resp.hour.time).to.equal(time);
       expect(resp.hour.temperature).to.equal(hour.temperature);
@@ -83,7 +80,6 @@ describe('Weather Forecast', () => {
 
     it('ignores time out of range', async () => {
       mockdate.set(new Date('2000-01-01'));
-      const { darkSky } = mockDarkSky();
       const weather = new WeatherForecast(locationResolverBoston, darkSky);
       const resp = await weather.lookup('Boston', { type, value });
       expect(resp).to.be.undefined;
