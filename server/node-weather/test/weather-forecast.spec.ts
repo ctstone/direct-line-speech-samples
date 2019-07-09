@@ -92,7 +92,7 @@ describe('Weather Forecast', () => {
     });
   });
 
-  describe('Date Range', () => {
+  describe('For Date Range', () => {
     const type = 'daterange';
     const start = DEFAULT_DATE;
     const end = moment.utc(FORECAST_DATE).add(2, 'days').format('YYYY-MM-DD');
@@ -106,7 +106,6 @@ describe('Weather Forecast', () => {
       expect(resp.daily.length).to.equal(2);
       expect(resp.daily[0].time).to.equal(expectStart);
       expect(resp.daily[resp.daily.length - 1].time).to.equal(expectEnd);
-      console.log(resp.summary);
     });
 
     it('ignores null location', async () => {
@@ -116,7 +115,7 @@ describe('Weather Forecast', () => {
     });
   });
 
-  describe('Time Range', () => {
+  describe('For Time Range', () => {
     const type = 'timerange';
     const start = '12:00:00';
     const end = '15:00:00';

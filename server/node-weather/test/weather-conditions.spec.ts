@@ -38,13 +38,13 @@ describe('Weather Conditions', () => {
 
     it('gives temperature', async () => {
       const resp = await conditions.lookup('Boston', { type, value }, 'temperature');
-      expect(Math.round(resp.value.value)).to.equal(79);
+      expect(resp.value.value).to.bignumber.equal(79, 0);
       expect(resp.value.units).to.equalIgnoreCase('degrees fahrenheit');
     });
 
-    it.only('xxx', async () => {
+    it('gives high temperature', async () => {
       const resp = await conditions.lookup('Boston', { type, value }, 'temperatureHigh');
-      expect(resp.value.value).to.bignumber.equal(89, 0);
+      expect(resp.value.value).to.be.bignumber.equal(89, 0);
       expect(resp.value.units).to.equalIgnoreCase('degrees fahrenheit');
     });
   });
