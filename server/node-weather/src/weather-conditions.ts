@@ -300,7 +300,7 @@ export class WeatherForecastConditions {
   }
 
   async forTimeRange(place: string, relativeTime: RelativeDateTime, feature: WeatherFeature, options?: WeatherOptions): Promise<WeatherConditionRange> {
-    const forecast = await this.forecast.forDateRange(place, relativeTime, options);
+    const forecast = await this.forecast.forTimeRange(place, relativeTime, options);
     if (forecast) {
       const { hourly, flags } = forecast;
       const units = getUnits(feature as DarkSkyFeature, flags.units);

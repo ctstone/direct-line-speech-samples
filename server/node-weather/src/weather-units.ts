@@ -42,7 +42,11 @@ export function getUnits(feature: DarkSkyFeature, unitsType: DarkSky.Units) {
 
     case 'cloudCover':
     case 'precipProbability':
+    case 'humidity':
       return '%';
+
+    case 'ozone':
+      return 'Dobson units';
 
     default:
       return '';

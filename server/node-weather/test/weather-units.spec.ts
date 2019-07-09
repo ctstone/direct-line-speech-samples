@@ -9,6 +9,8 @@ const TEMPERATURE_PROPS: DarkSkyFeature[] = [
   'temperatureLow',
   'temperatureHigh',
   'apparentTemperature',
+  'apparentTemperatureHigh',
+  'apparentTemperatureLow',
   'dewPoint'];
 
 const DISTANCE_PROPS: DarkSkyFeature[] = [
@@ -41,6 +43,7 @@ const PRESSURE_PROPS: DarkSkyFeature[] = [
 const PERCENT_PROPS: DarkSkyFeature[] = [
   'cloudCover',
   'precipProbability',
+  'humidity',
 ];
 
 describe('Weather Units', () => {
@@ -158,6 +161,12 @@ describe('Weather Units', () => {
       PERCENT_PROPS.forEach((prop) => {
         expect(getUnits(prop, 'us')).to.equal('%');
       });
+    });
+  });
+
+  describe('Ozone', () => {
+    it('handles units', () => {
+      expect(getUnits('ozone', 'us')).to.equal('Dobson units');
     });
   });
 });
