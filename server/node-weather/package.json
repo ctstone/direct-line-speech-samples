@@ -29,7 +29,7 @@
     "microsoft-bot-protocol-streamingextensions": "file:lib/microsoft-bot-protocol-streamingextensions",
     "microsoft-bot-protocol-websocket": "file:lib/microsoft-bot-protocol-websocket",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.25",
+    "moment-timezone": "^0.5.35",
     "y18n": "^4.0.1"
   },
   "devDependencies": {
