@@ -23,7 +23,7 @@
     "botbuilder": "^4.4.0",
     "botbuilder-ai": "^4.4.0",
     "dark-sky": "^1.1.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "microsoft-bot-protocol": "file:lib/microsoft-bot-protocol",
     "microsoft-bot-protocol-namedpipe": "file:lib/microsoft-bot-protocol-namedpipe",
     "microsoft-bot-protocol-streamingextensions": "file:lib/microsoft-bot-protocol-streamingextensions",
